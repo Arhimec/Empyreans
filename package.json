@@ -1,0 +1,16 @@
+{
+  "name": "emp-calculator",
+  "version": "1.0.0",
+  "description": "Empyrean calculator",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "server.js",
+  "scripts": {
+    "test": "test server",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "node-fetch": "^2.7.0"
+  }
+}

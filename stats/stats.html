@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>EMP-897b49 Mint Statistics</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css">
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+</head>
+<body>
+  <h2>EMP-897b49 Mint Statistics</h2>
+  <p>Minted so far: <span id="minted-count">Loading...</span></p>
+  <p>Last refreshed: <span id="last-refreshed">never</span></p>
+
+  <h3>All NFTs</h3>
+  <table id="nfts-table" class="display" style="width:100%"></table>
+
+  <h3>NFTs Missing Traits</h3>
+  <table id="missing-table" class="display" style="width:100%"></table>
+
+  <script>
+    function updateMintedCount() {
+      fetch('https://api.multiversx.com/nfts/count?collection=EMP-897b49')
+        .then(res => res.text())
+        .then(count => {
+          $('#minted-count').text(count);
+        })
+        .catch(err => {
+          $('#minted-count').text('Error');
+          console.error('Failed to get minted count:', err);
+        });
+    }
+
+    function updateTables() {
+      fetch('/api/stats').then(r => r.json()).then(data => {
+        $('#last-refreshed').text(data.updated || 'never');
+
+        const firstNft = data.allNfts[0] || {};
+        // Setup columns: token_id + traits except "image"
+        const nftColumns = [
+          { data: 'token_id', title: 'Token ID' }
+        ];
+        for (const key in firstNft) {
+          if (key !== 'token_id' && key !== 'image') {
+            nftColumns.push({ data: key, title: key });
+          }
+        }
+
+        $('#nfts-table').DataTable({
+          destroy: true,
+          data: data.allNfts,
+          columns: nftColumns,
+          order: [[0, 'asc']],
+          pageLength: 10
+        });
+
+        $('#missing-table').DataTable({
+          destroy: true,
+          data: data.missingTraits,
+          columns: [
+            { data: 'token_id', title: 'Token ID' },
+            { data: 'reason', title: 'Reason' }
+          ],
+          order: [[0, 'asc']],
+          pageLength: 10
+        });
+      });
+    }
+
+    $(document).ready(() => {
+      updateMintedCount();
+      setInterval(updateMintedCount, 30000);
+      updateTables();
+      setInterval(updateTables, 30000);
+    });
+  </script>
+</body>
+</html>

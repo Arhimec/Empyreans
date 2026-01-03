@@ -1,0 +1,221 @@
+body {
+  background: #101013;
+  color: #AEEFFF;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* --- Header Section --- */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: transparent;
+  padding: 24px 48px 14px 48px;
+  border-bottom: 2px solid #14e0e8;
+  margin-bottom: 14px;
+}
+
+.logo-hodl, .logo-mvx {
+  height: 52px;
+  width: 52px;
+  border-radius: 50%;
+  background: #23262a;
+  box-shadow: 0 0 8px #0aeff640;
+  object-fit: contain;
+  margin: 0 12px;
+}
+
+.project-title {
+  text-align: center;
+  font-size: 2.4rem;
+  letter-spacing: 0.06em;
+  font-weight: bold;
+  color: #19ffd9;
+  text-shadow: 0 0 14px #09f4ee90;
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+.project-subtitle {
+  font-size: 1.08rem;
+  text-align: center;
+  color: #AEEFFF;
+  margin-top: 3px;
+  margin-bottom: 0;
+  letter-spacing: 0.04em;
+}
+
+.glow-card {
+  background: #14161a;
+  border: 2px solid #19ffd9;
+  border-radius: 22px;
+  box-shadow: 0 0 16px #14e0e87a;
+  margin: 28px auto 0 auto;
+  max-width: 900px;
+  padding: 30px 38px 32px 38px;
+}
+
+.glow-card h1 {
+  font-size: 2.2rem;
+  color: #19ffd9;
+  font-weight: bold;
+  margin-bottom: 18px;
+  text-shadow: 0 0 10px #1fe1ee88;
+}
+
+.input-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.input-row label {
+  font-size: 1.07em;
+  color: #AEEFFF;
+  margin-right: 10px;
+  letter-spacing: .04em;
+}
+
+#walletInput {
+  background: #080f12;
+  border: 2px solid #10a8c2;
+  border-radius: 8px;
+  color: #AEF7FE;
+  font-size: 1em;
+  padding: 7px 12px;
+  outline: none;
+  width: 300px;
+  transition: border .2s;
+}
+#walletInput:focus {
+  border: 2px solid #1be8ee;
+}
+
+.btn {
+  background: #13dbe3;
+  color: #14161a;
+  font-weight: 600;
+  font-size: 1.08em;
+  border: none;
+  border-radius: 23px;
+  padding: 9px 21px;
+  cursor: pointer;
+  box-shadow: 0 0 8px #13e2e6 inset;
+  transition: background .2s, box-shadow .2s;
+}
+.btn:hover {
+  background: #48fbe9;
+  box-shadow: 0 0 18px #13e2e6;
+}
+
+.minted {
+  color: #aeefff;
+  font-size: 1.13em;
+  margin: 9px 0 8px 0;
+}
+
+.main-panels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+  margin: 32px auto 0 auto;
+  max-width: 1280px;
+  justify-content: center;
+}
+.glow-panel {
+  flex: 1 1 370px;
+  min-width: 340px;
+  background: #16181b;
+  border: 2px solid #19ffd9;
+  border-radius: 20px;
+  box-shadow: 0 0 13px #14e0e880;
+  min-height: 350px;
+  padding: 28px 20px 18px 32px;
+}
+
+.glow-panel h2 {
+  color: #00e1fe;
+  margin: 0 0 18px 0;
+  font-weight: 700;
+  font-size: 1.34rem;
+  letter-spacing: .03em;
+}
+
+.glow-panel ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.glow-panel .category-totals li {
+  margin-bottom: 6px;
+  font-size: 1.08em;
+  color: #aefefe;
+  letter-spacing: .01em;
+}
+.glow-panel .category-totals li strong {
+  color: #19ffd9;
+  margin-right: 8px;
+  font-weight: 600;
+}
+
+.debug-info {
+  color: #baffff;
+  font-size: 1.11em;
+  font-weight: bold;
+  margin-bottom: 9px;
+}
+
+.collapsible-cat summary {
+  font-size: 1.12em;
+  color: #19ffd9;
+  font-weight: 600;
+  border-radius: 7px;
+  cursor: pointer;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  margin-bottom: 3px;
+}
+
+.collapsible-nft summary {
+  font-size: 1em;
+  color: #aeefff;
+  background: #151a22;
+  border-radius: 6px;
+  margin-top: 4px;
+  margin-bottom: 2px;
+  padding: 2px 7px;
+  cursor: pointer;
+}
+
+.attr-list {
+  margin-left: 21px;
+  margin-bottom: 6px;
+  margin-top: 2px;
+  color: #fdfdfd;
+  font-size: .98em;
+}
+
+@media (max-width: 1080px) {
+  .main-panels {
+    flex-direction: column;
+    gap: 18px;
+  }
+  .header {
+    flex-direction: column;
+    gap: 8px;
+    padding: 20px 10px 13px 10px;
+  }
+  .logo-hodl, .logo-mvx {
+    height: 38px;
+    width: 38px;
+  }
+  .project-title {
+    font-size: 2rem;
+  }
+}

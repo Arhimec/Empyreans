@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>EMP-897b49 NFT Trait Counts</title>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css"/>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<style>
+  body { max-width: 900px; margin: 2em auto; font-family: Arial, sans-serif; }
+  label, select { font-size: 1.2em; margin-right: 10px; }
+</style>
+</head>
+<body>
+<h1>Trait Counts for EMP-897b49</h1>
+<label for="traitType">Show traits containing:</label>
+<select id="traitType">
+  <option value="Head">Head</option>
+  <option value="Astronaut">Astronaut</option>
+  <option value="Legendary">Legendary</option>
+</select>
+
+<table id="traitTable" class="display" style="width:100%">
+  <thead>
+    <tr><th>Trait Type</th><th>Value</th><th>Count</th><th>Max</th></tr>
+  </thead>
+  <tbody></tbody>
+  <tfoot>
+    <tr>
+      <td colspan="4" style="text-align:right; font-weight:bold;">
+        TOTAL NFTs: <span id="totalNFTs"></span>
+      </td>
+    </tr>
+  </tfoot>
+</table>
+<script>
+let dataObj = {};
+
+async function fillTable(filterTerm) {
+  if ($.fn.DataTable.isDataTable('#traitTable')) {
+    $('#traitTable').DataTable().destroy();
+  }
+  $('#traitTable tbody').empty();
+
+  if (!dataObj.counts) return;
+
+  const counts = dataObj.counts;
+  const maxPerTrait = dataObj.maxPerCategory || dataObj.maxPerTrait; // for compatibility
+  $('#totalNFTs').text(dataObj.totalNFTs);
+
+  const term = filterTerm.toLowerCase();
+
+  Object.entries(counts).forEach(([traitType, values]) => {
+    Object.entries(values).forEach(([value, count]) => {
+      // Show row if EITHER traittype OR value contains the term
+      if (term &&
+        !traitType.toLowerCase().includes(term) &&
+        !value.toLowerCase().includes(term)
+      ) {
+        return;
+      }
+      const maxVal = maxPerTrait[traitType] || "";
+      const row = `<tr>
+        <td>${traitType}</td>
+        <td>${value}</td>
+        <td>${count}</td>
+        <td>${maxVal}</td>
+      </tr>`;
+      $('#traitTable tbody').append(row);
+    });
+  });
+
+  $('#traitTable').DataTable({
+    order: [[2, 'desc']],
+    paging: true,
+    searching: true
+  });
+}
+
+$(async function() {
+  dataObj = await $.getJSON('traits.json');
+  fillTable('Head');
+  $('#traitType').on('change', function() {
+    fillTable(this.value);
+  });
+});
+</script>
+</body>
+</html>

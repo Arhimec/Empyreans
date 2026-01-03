@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HODL Token Club | NFT Rewards Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- HEADER SECTION -->
+<header class="header">
+  <div class="header-left">
+    <img src="Hodl_logo.jpg" alt="HODL Logo" class="logo-hodl" />
+  </div>
+  <div class="header-center">
+    <div class="project-title">HODL Token Club</div>
+    <div class="project-subtitle">on MultiversX Blockchain</div>
+  </div>
+  <div class="header-right">
+    <img src="mvx-ledger-icon-mint.svg" alt="MultiversX Logo" class="logo-mvx" />
+  </div>
+</header>
+
+<!-- MAIN INTERFACE SECTION -->
+<div class="glow-card" id="publicCalculator">
+  <h1>Calculate Wallet NFT Rewards</h1>
+  <form class="input-row" onsubmit="return false;">
+    <label for="walletInput">Wallet Address</label>
+    <input type="text" id="walletInput" placeholder="erd1..." autocomplete="off" />
+   <!--  <button class="btn" id="calculateBtn">Calculate Rewards</button> -->
+  </form>
+<button class="btn" id="calculateBtn">Calculate Rewards</button>
+</div>
+
+<div class="glow-card" id="publicCalculator">
+<h1>Traits Distribution</h1>
+<a href="stats.html" target="_blank" rel="noopener" class="btn">Open Trait Distribution</a>
+  <div class="minted">
+    <strong>Minted by now:</strong> <span id="mintedCount">Loading...</span>
+  </div>
+</div>
+
+<div class="main-panels">
+  <div class="glow-panel">
+    <h2>Total Weekly Reward: <span id="totalReward">—</span></h2>
+    <div>
+      <div style="font-weight:500;">Category Reward Totals:</div>
+      <ul class="category-totals" id="categoryTotals"></ul>
+    </div>
+    <button class="btn" id="showManageBtn" style="margin-top: 16px;">Manage Rewards</button>
+  </div>
+  <div class="glow-panel" style="min-width:320px;">
+    <div class="debug-info">Detailed Info</div>
+    <div id="categoriesContainer"></div>
+    <div id="excludedNFTsSection" style="margin-top:16px;">
+      <div style="font-size:1em;font-weight:600;">NFTs Excluded</div>
+      <ul id="excludedNFTsList"></ul>
+    </div>
+  </div>
+</div>
+
+<!-- PASSWORD PROMPT -->
+<div id="passwordSection" style="display:none; margin-top: 20px; max-width:900px; margin-left:auto; margin-right:auto;">
+  <label for="passwordInput" style="font-weight: 700; font-size: 1.03em; color: #AEEFFF;">Enter Admin Password to Manage Rewards:</label>
+  <input type="password" id="passwordInput" placeholder="Enter password" autocomplete="off" style="background:#080f12; border:2px solid #10a8c2; color:#AEF7FE; font-size:1em; padding:8px 12px; width:350px; border-radius:8px; outline:none; margin-right: 12px;" />
+  <button class="btn" id="passwordBtn" style="margin-right: 8px;">Submit</button>
+  <button class="btn" id="cancelPasswordBtn" style="background:#ff5555; color:#14161a; box-shadow:none;">Cancel</button>
+  <div class="error" id="passwordError" style="margin-top: 8px;"></div>
+</div>
+
+<!-- REWARDS MANAGEMENT -->
+<div id="rewardsManagement" style="display:none; max-width:900px; margin-left:auto; margin-right:auto; margin-top: 32px;">
+  <button id="logoutBtn" class="btn" style="float: right; margin-bottom: 12px; background: #ff6666; color: #14161a; box-shadow:none;">Logout</button>
+  <h2>Category-based Trait Rewards</h2>
+
+  <h3>Add/Update Reward</h3>
+  <form id="addRewardForm" style="display:flex; gap: 12px; flex-wrap: wrap; align-items:center;">
+    <label style="flex-shrink:0;">Category (prefix before '_Head'):</label>
+    <input type="text" id="newCategory" required autocomplete="off" style="flex-grow:1; max-width: 280px; padding:6px 10px; border-radius: 8px; border: 2px solid #10a8c2; background: #080f12; color:#AEF7FE; font-size:1em; outline:none;" />
+    
+    <label style="flex-shrink:0;">Reward $REWARD:</label>
+    <input type="number" id="newReward" required min="0" style="flex-grow:1; max-width: 110px; padding:6px 12px; border-radius: 8px; border: 2px solid #10a8c2; background: #080f12; color:#AEF7FE; font-size:1em; outline:none;" />
+    
+    <button type="submit" class="btn" style="flex-shrink:0; margin-left: auto;">Save Reward</button>
+  </form>
+  <div class="error" id="formError" style="margin-top: 6px; color:#ff6666;"></div>
+
+  <h3 style="margin-top: 28px;">Existing Rewards</h3>
+  <table id="rewardsTable" aria-label="Category rewards table" style="width:100%; border-collapse: collapse;">
+    <thead>
+      <tr style="border-bottom: 1px solid #10a8c2;">
+        <th style="text-align:left; padding: 10px;">Category</th>
+        <th style="text-align:right; padding: 10px;">Reward $REWARD</th>
+        <th style="text-align:center; padding: 10px;">Actions</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <h2 style="margin-top: 36px;">Resync Categories from Collection</h2>
+  <button id="resyncCollectionBtn" class="btn">Resync Categories</button>
+</div>
+
+<script>
+const collectionId = "EMP-897b49";
+
+const mintedCountSpan = document.getElementById('mintedCount');
+const calculateBtn = document.getElementById('calculateBtn');
+const walletInput = document.getElementById('walletInput');
+const showManageBtn = document.getElementById('showManageBtn');
+const passwordSection = document.getElementById('passwordSection');
+const passwordInput = document.getElementById('passwordInput');
+const passwordBtn = document.getElementById('passwordBtn');
+const cancelPasswordBtn = document.getElementById('cancelPasswordBtn');
+const passwordError = document.getElementById('passwordError');
+const rewardsDiv = document.getElementById('rewardsManagement');
+const logoutBtn = document.getElementById('logoutBtn');
+
+const totalRewardEl = document.getElementById('totalReward');
+const categoryTotalsEl = document.getElementById('categoryTotals');
+const categoriesContainer = document.getElementById('categoriesContainer');
+const excludedList = document.getElementById('excludedNFTsList');
+const rewardsTableBody = document.querySelector('#rewardsTable tbody');
+const formError = document.getElementById('formError');
+const addRewardForm = document.getElementById('addRewardForm');
+
+showManageBtn.addEventListener('click', () => {
+  showManageBtn.style.display = 'none';
+  passwordSection.style.display = 'block';
+  passwordInput.focus();
+});
+
+passwordBtn.addEventListener('click', () => {
+  const pw = passwordInput.value.trim();
+  if (pw === 'nothing') {
+    passwordError.textContent = '';
+    passwordSection.style.display = 'none';
+    passwordInput.value = '';
+    rewardsDiv.style.display = 'block';
+    loadConfig();
+  } else {
+    passwordError.textContent = 'Incorrect password';
+  }
+});
+
+cancelPasswordBtn.addEventListener('click', () => {
+  passwordSection.style.display = 'none';
+  passwordError.textContent = '';
+  passwordInput.value = '';
+  showManageBtn.style.display = 'inline-block';
+});
+
+logoutBtn.addEventListener('click', () => {
+  rewardsDiv.style.display = 'none';
+  passwordSection.style.display = 'none';
+  showManageBtn.style.display = 'inline-block';
+  totalRewardEl.textContent = '—';
+  categoryTotalsEl.innerHTML = '';
+  categoriesContainer.innerHTML = '';
+  excludedList.innerHTML = '';
+  walletInput.value = '';
+});
+
+async function loadConfig() {
+  formError.textContent = '';
+  const res = await fetch('/api/config');
+  const traitRewards = await res.json();
+  renderTable(traitRewards);
+}
+
+function renderTable(traitRewards) {
+  rewardsTableBody.innerHTML = '';
+  for (const [category, rewardVal] of Object.entries(traitRewards)) {
+    const reward = Number(rewardVal);
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td style="padding: 6px 10px;">${category}</td>
+      <td style="padding: 6px 10px; text-align: right;">
+        <input type="number" value="${isNaN(reward) ? 0 : reward}" min="0" style="width: 70px;" onchange="updateReward('${category}', this.value)">
+      </td>
+      <td style="padding: 6px 10px; text-align: center;">
+        <button onclick="deleteReward('${category}')" style="padding:4px 12px; background:#ff5555; color:#14161a; border:none; border-radius: 6px; cursor:pointer;">Delete</button>
+      </td>
+    `;
+    rewardsTableBody.appendChild(row);
+  }
+}
+
+async function updateReward(category, reward) {
+  reward = parseInt(reward);
+  if (isNaN(reward)) return;
+  await fetch('/api/config', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ category, reward }),
+  });
+  await loadConfig();
+}
+
+async function deleteReward(category) {
+  await fetch('/api/config', {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ category }),
+  });
+  await loadConfig();
+}
+
+addRewardForm.addEventListener('submit', async e => {
+  e.preventDefault();
+  const category = document.getElementById('newCategory').value.trim();
+  const reward = parseInt(document.getElementById('newReward').value);
+  if (!category || isNaN(reward) || reward < 0) {
+    formError.textContent = 'Fill all fields correctly.';
+    return;
+  }
+  if (rewardsTableBody.querySelector(`td:contains('${category}')`) || false) {
+    formError.textContent = 'Category already exists.';
+    return;
+  }
+  await fetch('/api/config', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ category, reward }),
+  });
+  e.target.reset();
+  await loadConfig();
+});
+
+calculateBtn.addEventListener('click', async () => {
+  const wallet = walletInput.value.trim();
+  totalRewardEl.textContent = '—';
+  categoryTotalsEl.innerHTML = '';
+  categoriesContainer.innerHTML = '';
+  excludedList.innerHTML = '';
+  if (!wallet) {
+    alert('Please enter a wallet address');
+    return;
+  }
+  totalRewardEl.textContent = 'Loading...';
+
+  try {
+    const res = await fetch(`/api/rewards/${wallet}/${collectionId}`);
+    const data = await res.json();
+
+    if (!res.ok || !data) {
+      totalRewardEl.textContent = 'Error';
+      return;
+    }
+
+    totalRewardEl.textContent = data.totalReward;
+
+    categoryTotalsEl.innerHTML = '';
+    for (const [cat, info] of Object.entries(data.categorySums || {})) {
+      categoryTotalsEl.innerHTML += `<li><strong>${cat}:</strong> ${info.reward} $REWARD from ${info.count} NFT${info.count !== 1 ? 's' : ''}</li>`;
+    }
+
+    // Group NFTs into categories
+    const categoriesMap = {};
+    (data.includedNFTs || []).forEach(nft => {
+      nft.categories.forEach(cat => {
+        if (!categoriesMap[cat]) categoriesMap[cat] = [];
+        categoriesMap[cat].push(nft);
+      });
+    });
+
+    categoriesContainer.innerHTML = '';
+    for (const [category, nfts] of Object.entries(categoriesMap)) {
+      const count = data.categorySums?.[category]?.count || nfts.length;
+      const catDetails = document.createElement('details');
+      catDetails.className = "collapsible-cat";
+      const catSummary = document.createElement('summary');
+      catSummary.innerHTML = `${category} (${count} NFT${count !== 1 ? 's' : ''})`;
+      catDetails.appendChild(catSummary);
+
+      const nftList = document.createElement('ul');
+      for (const nft of nfts) {
+        const nftDetails = document.createElement('details');
+        nftDetails.className = "collapsible-nft";
+
+        const nftSummary = document.createElement('summary');
+        nftSummary.innerHTML = `${nft.name} (Reward: ${nft.reward})`;
+        nftDetails.appendChild(nftSummary);
+
+        const attrList = document.createElement('ul');
+        attrList.className = "attr-list";
+        if (nft.attributes && nft.attributes.length > 0) {
+          nft.attributes.forEach(attr => {
+            const li = document.createElement('li');
+            li.textContent = `${attr.trait_type}: ${attr.value}`;
+            attrList.appendChild(li);
+          });
+        } else {
+          const li = document.createElement('li');
+          li.innerHTML = '<em>No attributes found</em>';
+          attrList.appendChild(li);
+        }
+        nftDetails.appendChild(attrList);
+        nftList.appendChild(nftDetails);
+      }
+      catDetails.appendChild(nftList);
+      categoriesContainer.appendChild(catDetails);
+    }
+
+    if (data.excludedNFTs.length === 0) {
+      excludedList.innerHTML = '<li>All NFTs qualified with traits.</li>';
+    } else {
+      data.excludedNFTs.forEach(nft => {
+        excludedList.innerHTML += `<li><strong>${nft.name}</strong> No qualifying traits found.</li>`;
+      });
+    }
+
+  } catch (e) {
+    totalRewardEl.textContent = 'Error';
+  }
+});
+
+
+document.getElementById('resyncCollectionBtn').addEventListener('click', async () => {
+  try {
+    const res = await fetch(`/api/all-traits/${collectionId}`);
+    const categories = await res.json();
+    let addedCount = 0;
+    for (const category of categories) {
+      if (!rewardsTableBody.querySelector(`input[value="${category}"]`)) {
+        await fetch('/api/config', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ category, reward: 0 }),
+        });
+        addedCount++;
+      }
+    }
+    alert(`Resync complete. Added ${addedCount} categories.`);
+    await loadConfig();
+  } catch (e) {
+    alert('Resync failed: ' + e.message);
+  }
+});
+
+loadConfig();
+loadMintedCount();
+
+async function loadMintedCount() {
+  const mintedCountSpan = document.getElementById('mintedCount');
+
+  async function fetchCount() {
+    mintedCountSpan.textContent = 'Loading...';
+    try {
+      const res = await fetch('https://api.multiversx.com/nfts/count?collection=EMP-897b49');
+      if (!res.ok) {
+        mintedCountSpan.textContent = 'N/A';
+        return;
+      }
+      const text = await res.text();
+      const count = parseInt(text.trim());
+      if (!isNaN(count)) {
+        mintedCountSpan.textContent = count.toLocaleString();
+      } else {
+        mintedCountSpan.textContent = 'N/A';
+      }
+    } catch (e) {
+      mintedCountSpan.textContent = 'Error';
+    }
+  }
+  
+  await fetchCount();
+  setInterval(fetchCount, 30000); // Refresh every 30 seconds
+}
+
+
+</script>
+</body>
+</html>
+

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>NFT Rewards Calculator</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    label, input, button { font-size: 1.1em; }
+    input { margin-right: 8px; padding: 6px; width: 350px; }
+    button { padding: 6px 12px; }
+    .results { margin-top: 20px; }
+    .nft { margin-bottom: 12px; border-bottom: 1px solid #ccc; padding-bottom: 10px; }
+    .traits { margin-left: 20px; font-size: 0.95em; color: #333; }
+  </style>
+</head>
+<body>
+
+  <h2>MultiversX NFT Traits Rewards Calculator</h2>
+
+  <label for="wallet">Enter Wallet Address:</label>
+  <input type="text" id="wallet" placeholder="erd1xyz..." />
+  <button id="submitBtn">Submit</button>
+
+<a href="traits-sum.html" target="_blank" rel="noopener">Open Trait Summary</a>
+
+  <div class="results" id="results"></div>
+
+  <script>
+    const collectionId = 'EMP-897b49'; // fixed collection ID, modify if needed
+
+    document.getElementById('submitBtn').addEventListener('click', async () => {
+      const wallet = document.getElementById('wallet').value.trim();
+      if (!wallet) {
+        alert('Please enter a wallet address.');
+        return;
+      }
+
+      const resultsDiv = document.getElementById('results');
+      resultsDiv.innerHTML = 'Loading...';
+
+      try {
+        const response = await fetch(`/api/rewards/${wallet}/${collectionId}`);
+        const data = await response.json();
+
+        if (response.ok) {
+          let html = `<h3>Total Weekly Reward: ${data.totalReward}</h3>`;
+          html += `<h4>NFTs and Traits:</h4>`;
+
+          data.nfts.forEach(nft => {
+            html += `<div class="nft">
+              <strong>${nft.name}</strong> (Reward: ${nft.reward})<br />
+              <div class="traits"><em>Traits:</em><br />`;
+            nft.attributes.forEach(trait => {
+              html += `${trait.trait_type}: ${trait.value}<br />`;
+            });
+            html += `</div></div>`;
+          });
+
+          resultsDiv.innerHTML = html;
+        } else {
+          resultsDiv.innerHTML = `<span style="color: red;">Error: ${data.error || 'Unknown error occurred'}</span>`;
+        }
+      } catch (error) {
+        resultsDiv.innerHTML = `<span style="color: red;">API call failed: ${error.message}</span>`;
+      }
+    });
+  </script>
+
+</body>
+</html>

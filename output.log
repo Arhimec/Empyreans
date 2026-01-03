@@ -1,0 +1,99 @@
+Server running on http://localhost:3012
+Generating stats for collection EMP-897b49...
+Fetched 100 NFTs (total: 100)
+Fetched 100 NFTs (total: 200)
+Fetched 100 NFTs (total: 300)
+Fetched 100 NFTs (total: 400)
+Fetched 100 NFTs (total: 500)
+Fetched 100 NFTs (total: 600)
+Fetched 100 NFTs (total: 700)
+Fetched 100 NFTs (total: 800)
+Fetched 100 NFTs (total: 900)
+Fetched 100 NFTs (total: 1000)
+Fetched 100 NFTs (total: 1100)
+Fetched 100 NFTs (total: 1200)
+Fetched 100 NFTs (total: 1300)
+Fetched 100 NFTs (total: 1400)
+Fetched 100 NFTs (total: 1500)
+Fetched 100 NFTs (total: 1600)
+Fetched 100 NFTs (total: 1700)
+Fetched 100 NFTs (total: 1800)
+Fetched 100 NFTs (total: 1900)
+Fetched 100 NFTs (total: 2000)
+Fetched 100 NFTs (total: 2100)
+Fetched 100 NFTs (total: 2200)
+Fetched 100 NFTs (total: 2300)
+Fetched 100 NFTs (total: 2400)
+Fetched 100 NFTs (total: 2500)
+Fetched 100 NFTs (total: 2600)
+Fetched 100 NFTs (total: 2700)
+Fetched 100 NFTs (total: 2800)
+Fetched 100 NFTs (total: 2900)
+Fetched 100 NFTs (total: 3000)
+Fetched 100 NFTs (total: 3100)
+Fetched 100 NFTs (total: 3200)
+Fetched 100 NFTs (total: 3300)
+Fetched 100 NFTs (total: 3400)
+Fetched 100 NFTs (total: 3500)
+Fetched 100 NFTs (total: 3600)
+Fetched 100 NFTs (total: 3700)
+Fetched 100 NFTs (total: 3800)
+Fetched 100 NFTs (total: 3900)
+Fetched 100 NFTs (total: 4000)
+Fetched 100 NFTs (total: 4100)
+Fetched 100 NFTs (total: 4200)
+Fetched 100 NFTs (total: 4300)
+Fetched 100 NFTs (total: 4400)
+Fetched 100 NFTs (total: 4500)
+Fetched 100 NFTs (total: 4600)
+Fetched 100 NFTs (total: 4700)
+Fetched 12 NFTs (total: 4712)
+Processing NFT 100/4712
+Processing NFT 200/4712
+Processing NFT 300/4712
+Processing NFT 400/4712
+Processing NFT 500/4712
+Processing NFT 600/4712
+Processing NFT 700/4712
+Processing NFT 800/4712
+Processing NFT 900/4712
+Processing NFT 1000/4712
+Processing NFT 1100/4712
+Processing NFT 1200/4712
+Processing NFT 1300/4712
+Processing NFT 1400/4712
+Processing NFT 1500/4712
+Processing NFT 1600/4712
+Processing NFT 1700/4712
+Processing NFT 1800/4712
+Processing NFT 1900/4712
+Processing NFT 2000/4712
+Processing NFT 2100/4712
+Processing NFT 2200/4712
+Processing NFT 2300/4712
+Processing NFT 2400/4712
+Processing NFT 2500/4712
+Processing NFT 2600/4712
+Processing NFT 2700/4712
+Processing NFT 2800/4712
+Processing NFT 2900/4712
+Processing NFT 3000/4712
+Processing NFT 3100/4712
+Processing NFT 3200/4712
+Processing NFT 3300/4712
+Processing NFT 3400/4712
+Processing NFT 3500/4712
+Processing NFT 3600/4712
+Processing NFT 3700/4712
+Processing NFT 3800/4712
+Processing NFT 3900/4712
+Processing NFT 4000/4712
+Processing NFT 4100/4712
+Processing NFT 4200/4712
+Processing NFT 4300/4712
+Processing NFT 4400/4712
+Processing NFT 4500/4712
+Processing NFT 4600/4712
+Processing NFT 4700/4712
+Stats saved to /root/mvx-apps/emp-calculator/public/stats.json
+Total NFTs: 4712, Categorized: 4712

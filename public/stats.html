@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NFT Collection Statistics - EMP-897b49</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 2rem;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+    
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 2rem;
+      text-align: center;
+    }
+    
+    .header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .header p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+    
+    .stats-summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      padding: 2rem;
+      background: #f8f9fa;
+    }
+    
+    .stat-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    
+    .stat-card h3 {
+      color: #666;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+    
+    .stat-card .value {
+      color: #667eea;
+      font-size: 2.5rem;
+      font-weight: bold;
+    }
+    
+    .content {
+      padding: 2rem;
+    }
+    
+    .content h2 {
+      color: #333;
+      margin-bottom: 1.5rem;
+      font-size: 1.8rem;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    
+    thead {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    
+    th, td {
+      padding: 1rem;
+      text-align: left;
+    }
+    
+    th {
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.9rem;
+    }
+    
+    tbody tr {
+      border-bottom: 1px solid #e0e0e0;
+      transition: background 0.3s;
+    }
+    
+    tbody tr:hover {
+      background: #f8f9fa;
+    }
+    
+    tbody tr:last-child {
+      border-bottom: none;
+    }
+    
+    .percentage {
+      color: #667eea;
+      font-weight: bold;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 3rem;
+      color: #666;
+    }
+    
+    .loading:after {
+      content: '...';
+      animation: dots 1.5s steps(3, end) infinite;
+    }
+    
+    @keyframes dots {
+      0%, 20% { content: '.'; }
+      40% { content: '..'; }
+      60%, 100% { content: '...'; }
+    }
+    
+    .error {
+      background: #fee;
+      color: #c33;
+      padding: 1rem;
+      border-radius: 5px;
+      margin: 1rem 0;
+    }
+    
+    .timestamp {
+      text-align: center;
+      color: #999;
+      padding: 1rem;
+      font-size: 0.9rem;
+    }
+    
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: #e0e0e0;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 0.5rem;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+      transition: width 0.3s ease;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🚀 NFT Collection Statistics</h1>
+      <p>EMP-897b49 Collection Analytics</p>
+    </div>
+    
+    <div class="stats-summary" id="summary">
+      <div class="loading">Loading statistics</div>
+    </div>
+    
+    <div class="content">
+      <h2>Trait Distribution</h2>
+      <div id="stats-table">
+        <div class="loading">Loading data</div>
+      </div>
+    </div>
+    
+    <div class="timestamp" id="timestamp"></div>
+  </div>
+
+  <script>
+    fetch('/stats.json')
+      .then(response => {
+        if (!response.ok) throw new Error('Stats file not found');
+        return response.json();
+      })
+      .then(data => {
+        const summaryHtml = `
+          <div class="stat-card">
+            <h3>Total NFTs</h3>
+            <div class="value">${data.totalNFTs || data.total}</div>
+          </div>
+          <div class="stat-card">
+            <h3>Categorized</h3>
+            <div class="value">${data.total}</div>
+          </div>
+          <div class="stat-card">
+            <h3>Categories</h3>
+            <div class="value">${Object.keys(data.categories).length}</div>
+          </div>
+          <div class="stat-card">
+            <h3>Coverage</h3>
+            <div class="value">${Math.round((data.total / (data.totalNFTs || data.total)) * 100)}%</div>
+          </div>
+        `;
+        document.getElementById('summary').innerHTML = summaryHtml;
+        
+        let tableHtml = '<table><thead><tr><th>Trait Category</th><th>Count</th><th>Percentage</th><th>Distribution</th></tr></thead><tbody>';
+        
+        const sortedCategories = Object.entries(data.categories)
+          .sort((a, b) => b[1] - a[1]);
+        
+        sortedCategories.forEach(([category, count]) => {
+          const percentage = ((count / data.total) * 100).toFixed(2);
+          tableHtml += `
+            <tr>
+              <td><strong>${category}</strong></td>
+              <td>${count}</td>
+              <td class="percentage">${percentage}%</td>
+              <td>
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: ${percentage}%"></div>
+                </div>
+              </td>
+            </tr>
+          `;
+        });
+        
+        tableHtml += '</tbody></table>';
+        document.getElementById('stats-table').innerHTML = tableHtml;
+        
+        if (data.lastUpdated) {
+          const date = new Date(data.lastUpdated);
+          document.getElementById('timestamp').innerHTML = 
+            `Last updated: ${date.toLocaleString()}`;
+        }
+      })
+      .catch(error => {
+        document.getElementById('summary').innerHTML = 
+          `<div class="error">Error loading statistics: ${error.message}</div>`;
+        document.getElementById('stats-table').innerHTML = 
+          `<div class="error">Please ensure the server has generated stats.json</div>`;
+      });
+  </script>
+</body>
+</html>

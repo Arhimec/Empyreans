@@ -16,15 +16,18 @@
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       min-height: 100vh;
       padding: 2rem;
+      color: #333;
     }
     
     .container {
-      max-width: 1200px;
+      max-width: 1400px;
       margin: 0 auto;
       background: white;
       border-radius: 20px;
       box-shadow: 0 20px 60px rgba(0,0,0,0.3);
       overflow: hidden;
+      display: flex;
+      flex-direction: column;
     }
     
     .header {
@@ -50,6 +53,7 @@
       gap: 1.5rem;
       padding: 2rem;
       background: #f8f9fa;
+      border-bottom: 1px solid #e0e0e0;
     }
     
     .stat-card {
@@ -73,44 +77,144 @@
       font-weight: bold;
     }
     
-    .content {
-      padding: 2rem;
+    .controls-bar {
+      padding: 1.5rem 2rem;
+      background: #fff;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .controls-group {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .btn {
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+      background: white;
+      cursor: pointer;
+      font-weight: 600;
+      color: #555;
+      transition: all 0.2s;
+      font-size: 0.9rem;
+    }
+
+    .btn:hover {
+      background: #f5f5f5;
+      border-color: #ccc;
+    }
+
+    .btn-primary {
+      background: #667eea;
+      border-color: #667eea;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #5a6fd1;
+      border-color: #5a6fd1;
     }
     
-    .content h2 {
-      color: #333;
-      margin-bottom: 1.5rem;
-      font-size: 1.8rem;
+    .content {
+      padding: 2rem;
+      flex: 1;
+    }
+    
+    /* Grid layout for trait tables */
+    .traits-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 1.5rem;
+      align-items: start; /* Prevents stretching to match height */
+    }
+    
+    .trait-category {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      overflow: hidden;
+      border: 1px solid #eee;
+      transition: box-shadow 0.2s;
+    }
+    
+    /* Accordion Header Styles */
+    .trait-category h3 {
+      background: #f8f9fa;
+      padding: 1rem;
+      color: #444;
+      font-size: 1.1rem;
+      border-bottom: 2px solid #667eea;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+      transition: background 0.2s;
+    }
+    
+    .trait-category h3:hover {
+      background: #f0f0f0;
+    }
+
+    .trait-category h3 .toggle-icon {
+      font-size: 0.8rem;
+      transition: transform 0.3s ease;
+    }
+    
+    /* Collapsed state class */
+    .trait-category.collapsed h3 {
+      border-bottom: 1px solid transparent;
+    }
+
+    .trait-category.collapsed h3 .toggle-icon {
+      transform: rotate(-90deg);
+    }
+
+    .trait-category.collapsed table {
+      display: none;
+    }
+
+    .trait-count-badge {
+      background: #e9ecef;
+      padding: 0.2rem 0.6rem;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      color: #666;
+      margin-left: auto;
+      margin-right: 0.5rem;
     }
     
     table {
       width: 100%;
       border-collapse: collapse;
-      background: white;
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     }
     
     thead {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
+      background: #fafafa;
+      color: #666;
     }
     
     th, td {
-      padding: 1rem;
+      padding: 0.8rem 1rem;
       text-align: left;
+      font-size: 0.9rem;
     }
     
     th {
       font-weight: 600;
       text-transform: uppercase;
-      font-size: 0.9rem;
+      font-size: 0.75rem;
+      letter-spacing: 0.5px;
     }
     
     tbody tr {
-      border-bottom: 1px solid #e0e0e0;
-      transition: background 0.3s;
+      border-bottom: 1px solid #f0f0f0;
     }
     
     tbody tr:hover {
@@ -124,31 +228,33 @@
     .percentage {
       color: #667eea;
       font-weight: bold;
+      width: 70px;
+      text-align: right;
+    }
+    
+    .count-col {
+      width: 80px;
+    }
+    
+    .progress-bar {
+      width: 100%;
+      height: 6px;
+      background: #e0e0e0;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 0.4rem;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
     }
     
     .loading {
       text-align: center;
       padding: 3rem;
       color: #666;
-    }
-    
-    .loading:after {
-      content: '...';
-      animation: dots 1.5s steps(3, end) infinite;
-    }
-    
-    @keyframes dots {
-      0%, 20% { content: '.'; }
-      40% { content: '..'; }
-      60%, 100% { content: '...'; }
-    }
-    
-    .error {
-      background: #fee;
-      color: #c33;
-      padding: 1rem;
-      border-radius: 5px;
-      margin: 1rem 0;
+      width: 100%;
     }
     
     .timestamp {
@@ -156,21 +262,17 @@
       color: #999;
       padding: 1rem;
       font-size: 0.9rem;
+      background: #f8f9fa;
+      border-top: 1px solid #eee;
     }
     
-    .progress-bar {
-      width: 100%;
-      height: 8px;
-      background: #e0e0e0;
-      border-radius: 4px;
-      overflow: hidden;
-      margin-top: 0.5rem;
-    }
-    
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-      transition: width 0.3s ease;
+    .error {
+      background: #fee;
+      color: #c33;
+      padding: 1rem;
+      border-radius: 5px;
+      margin: 1rem;
+      text-align: center;
     }
   </style>
 </head>
@@ -182,13 +284,22 @@
     </div>
     
     <div class="stats-summary" id="summary">
-      <div class="loading">Loading statistics</div>
+      <div class="loading">Loading summary...</div>
+    </div>
+
+    <div class="controls-bar">
+      <div class="controls-group">
+        <button class="btn btn-primary" onclick="exportToCSV()">📥 Download CSV</button>
+      </div>
+      <div class="controls-group">
+        <button class="btn" onclick="toggleAll(false)">Expand All</button>
+        <button class="btn" onclick="toggleAll(true)">Collapse All</button>
+      </div>
     </div>
     
     <div class="content">
-      <h2>Trait Distribution</h2>
-      <div id="stats-table">
-        <div class="loading">Loading data</div>
+      <div id="traits-container" class="traits-grid">
+        <div class="loading">Loading detailed trait data...</div>
       </div>
     </div>
     
@@ -196,16 +307,20 @@
   </div>
 
   <script>
+    // Global variables to store data for CSV export
+    let globalTraitData = null;
+    let globalTotalNFTs = 0;
+
+    // Fetch Summary Stats
     fetch('/stats.json')
-      .then(response => {
-        if (!response.ok) throw new Error('Stats file not found');
-        return response.json();
-      })
+      .then(response => response.json())
       .then(data => {
+        globalTotalNFTs = data.totalNFTs || data.total || 0;
+        
         const summaryHtml = `
           <div class="stat-card">
             <h3>Total NFTs</h3>
-            <div class="value">${data.totalNFTs || data.total}</div>
+            <div class="value">${globalTotalNFTs}</div>
           </div>
           <div class="stat-card">
             <h3>Categorized</h3>
@@ -213,28 +328,56 @@
           </div>
           <div class="stat-card">
             <h3>Categories</h3>
-            <div class="value">${Object.keys(data.categories).length}</div>
+            <div class="value">${Object.keys(data.categories || {}).length}</div>
           </div>
           <div class="stat-card">
             <h3>Coverage</h3>
-            <div class="value">${Math.round((data.total / (data.totalNFTs || data.total)) * 100)}%</div>
+            <div class="value">${globalTotalNFTs > 0 ? Math.round((data.total / globalTotalNFTs) * 100) : 0}%</div>
           </div>
         `;
         document.getElementById('summary').innerHTML = summaryHtml;
         
-        let tableHtml = '<table><thead><tr><th>Trait Category</th><th>Count</th><th>Percentage</th><th>Distribution</th></tr></thead><tbody>';
+        if (data.lastUpdated) {
+          const date = new Date(data.lastUpdated);
+          document.getElementById('timestamp').innerHTML = `Last updated: ${date.toLocaleString()}`;
+        }
         
-        const sortedCategories = Object.entries(data.categories)
-          .sort((a, b) => b[1] - a[1]);
-        
-        sortedCategories.forEach(([category, count]) => {
-          const percentage = ((count / data.total) * 100).toFixed(2);
-          tableHtml += `
+        // Fetch detailed traits
+        return fetch('/trait_counts.json').then(res => {
+          if(!res.ok) throw new Error("Detailed stats not found");
+          return res.json();
+        }).then(traitData => {
+           globalTraitData = traitData;
+           renderTraits(traitData, globalTotalNFTs);
+        });
+      })
+      .catch(error => {
+        console.error(error);
+        document.getElementById('summary').innerHTML = 
+          `<div class="error">Error loading stats: ${error.message}</div>`;
+        document.getElementById('traits-container').innerHTML = 
+          `<div class="error">Failed to load detailed traits. Please ensure server has generated stats.</div>`;
+      });
+
+    function renderTraits(traitData, totalNFTs) {
+      const container = document.getElementById('traits-container');
+      container.innerHTML = ''; 
+      
+      const sortedCategories = Object.keys(traitData).sort();
+      
+      sortedCategories.forEach(category => {
+        const traitsObj = traitData[category];
+        const sortedTraits = Object.entries(traitsObj).sort((a, b) => b[1] - a[1]);
+          
+        let rowsHtml = '';
+        sortedTraits.forEach(([traitName, count]) => {
+          const percentage = totalNFTs > 0 ? ((count / totalNFTs) * 100).toFixed(2) : 0;
+          rowsHtml += `
             <tr>
-              <td><strong>${category}</strong></td>
-              <td>${count}</td>
+              <td>${traitName}</td>
+              <td class="count-col">${count}</td>
               <td class="percentage">${percentage}%</td>
-              <td>
+              <td style="width: 100px;">
                 <div class="progress-bar">
                   <div class="progress-fill" style="width: ${percentage}%"></div>
                 </div>
@@ -243,21 +386,90 @@
           `;
         });
         
-        tableHtml += '</tbody></table>';
-        document.getElementById('stats-table').innerHTML = tableHtml;
+        // Note the onclick handler for the header
+        const categoryHtml = `
+          <div class="trait-category collapsed" id="cat-${category.replace(/\s+/g, '-')}">
+            <h3 onclick="toggleCategory(this)">
+              <span>${category}</span>
+              <span class="trait-count-badge">${sortedTraits.length} traits</span>
+              <span class="toggle-icon">▼</span>
+            </h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Trait Name</th>
+                  <th>Count</th>
+                  <th>%</th>
+                  <th>Freq</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${rowsHtml}
+              </tbody>
+            </table>
+          </div>
+        `;
         
-        if (data.lastUpdated) {
-          const date = new Date(data.lastUpdated);
-          document.getElementById('timestamp').innerHTML = 
-            `Last updated: ${date.toLocaleString()}`;
-        }
-      })
-      .catch(error => {
-        document.getElementById('summary').innerHTML = 
-          `<div class="error">Error loading statistics: ${error.message}</div>`;
-        document.getElementById('stats-table').innerHTML = 
-          `<div class="error">Please ensure the server has generated stats.json</div>`;
+        container.innerHTML += categoryHtml;
       });
+    }
+
+    // Toggle specific category
+    function toggleCategory(headerElement) {
+      const container = headerElement.parentElement;
+      container.classList.toggle('collapsed');
+    }
+
+    // Toggle all categories
+    function toggleAll(shouldCollapse) {
+      const categories = document.querySelectorAll('.trait-category');
+      categories.forEach(cat => {
+        if (shouldCollapse) {
+          cat.classList.add('collapsed');
+        } else {
+          cat.classList.remove('collapsed');
+        }
+      });
+    }
+
+    // Export to CSV function
+    function exportToCSV() {
+      if (!globalTraitData) {
+        alert("Data not loaded yet");
+        return;
+      }
+
+      // CSV Header
+      let csvContent = "Category,Trait Name,Count,Percentage\n";
+
+      // Iterate and build rows
+      const sortedCategories = Object.keys(globalTraitData).sort();
+      sortedCategories.forEach(category => {
+        const traitsObj = globalTraitData[category];
+        const sortedTraits = Object.entries(traitsObj).sort((a, b) => b[1] - a[1]); // Sort by count desc
+
+        sortedTraits.forEach(([traitName, count]) => {
+          const percentage = globalTotalNFTs > 0 ? ((count / globalTotalNFTs) * 100).toFixed(2) : 0;
+          
+          // Escape quotes in names if necessary
+          const safeCategory = `"${category.replace(/"/g, '""')}"`;
+          const safeTrait = `"${traitName.replace(/"/g, '""')}"`;
+          
+          csvContent += `${safeCategory},${safeTrait},${count},${percentage}%\n`;
+        });
+      });
+
+      // Create download link
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", `emp_traits_stats_${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
   </script>
 </body>
 </html>

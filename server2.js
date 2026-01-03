@@ -11,6 +11,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 const configPath = path.join(__dirname, 'rewardsConfig.json');
 const statsPath = path.join(__dirname, 'public', 'stats.json');
+const traitCountsPath = path.join(__dirname, 'public', 'trait_counts.json'); // New file path
 const COLLECTION = 'EMP-897b49'; // Your collection ID
 
 const IPFS_GATEWAYS = [
@@ -216,8 +217,14 @@ async function resolveNFTAttributes(nft) {
 async function generateCollectionStats(collection) {
   console.log(`Generating stats for collection ${collection}...`);
   const allNFTs = await getAllNFTsFromCollection(collection);
-  const stats = {};
+  
+  // Stats for the summary cards
+  const summaryStats = {};
   let totalCount = 0;
+  
+  // Detailed stats for all traits
+  const traitCounts = {}; // { "Background": { "Red": 10, "Blue": 5 }, ... }
+
   let processedCount = 0;
 
   for (const nft of allNFTs) {
@@ -227,23 +234,48 @@ async function generateCollectionStats(collection) {
     }
     
     const { attributes } = await resolveNFTAttributes(nft);
+    
+    // 1. Logic for Summary Stats (Single Category per NFT)
     const category = getSingleTraitCategory(attributes);
     if (category) {
-      stats[category] = (stats[category] || 0) + 1;
+      summaryStats[category] = (summaryStats[category] || 0) + 1;
       totalCount++;
     }
+
+    // 2. Logic for Detailed Trait Counts (All Attributes)
+    attributes.forEach(attr => {
+      const type = attr.trait_type;
+      const val = attr.value;
+      
+      if (type && val) {
+        if (!traitCounts[type]) {
+          traitCounts[type] = {};
+        }
+        if (!traitCounts[type][val]) {
+          traitCounts[type][val] = 0;
+        }
+        traitCounts[type][val]++;
+      }
+    });
   }
 
+  // Save Summary Stats
   const statsOut = {
     total: totalCount,
     totalNFTs: allNFTs.length,
-    categories: stats,
+    categories: summaryStats,
     lastUpdated: new Date().toISOString()
   };
 
   fs.writeFileSync(statsPath, JSON.stringify(statsOut, null, 2));
+  
+  // Save Detailed Trait Counts
+  fs.writeFileSync(traitCountsPath, JSON.stringify(traitCounts, null, 2));
+
   console.log(`Stats saved to ${statsPath}`);
+  console.log(`Detailed trait counts saved to ${traitCountsPath}`);
   console.log(`Total NFTs: ${allNFTs.length}, Categorized: ${totalCount}`);
+  
   return statsOut;
 }
 
@@ -367,15 +399,6 @@ setInterval(async () => {
     console.error('Error in scheduled stats update:', err);
   }
 }, STATS_INTERVAL);
-
-app.listen(PORT, async () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-  try {
-    await generateCollectionStats(COLLECTION);
-  } catch (err) {
-    console.error('Error generating stats on startup:', err);
-  }
-});
 
 app.listen(PORT, async () => {
   console.log(`Server running on http://localhost:${PORT}`);

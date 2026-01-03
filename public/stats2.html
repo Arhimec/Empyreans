@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Trait Distribution Stats | HODL Token Club</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Slight specific overrides for the Stats table if needed, 
+       but keeping it native to style.css as much as possible */
+    .stats-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    .stats-table th {
+      text-align: left;
+      padding: 12px;
+      border-bottom: 2px solid #14e0e8;
+      color: #19ffd9;
+      font-size: 1.1em;
+    }
+    .stats-table td {
+      padding: 12px;
+      border-bottom: 1px solid #14e0e840;
+      color: #AEEFFF;
+      font-size: 1.05em;
+    }
+    .stats-table tr:hover {
+      background: #19ffd910;
+    }
+    .tag {
+      background: #080f12;
+      border: 1px solid #19ffd9;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.9em;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-left">
+    <img src="Hodl_logo.jpg" alt="HODL Logo" class="logo-hodl" />
+  </div>
+  <div class="header-center">
+    <div class="project-title">HODL Token Club</div>
+    <div class="project-subtitle">Trait Reward Statistics</div>
+  </div>
+  <div class="header-right">
+    <img src="mvx-ledger-icon-mint.svg" alt="MultiversX Logo" class="logo-mvx" />
+  </div>
+</header>
+
+<div class="glow-card" style="max-width: 1000px;">
+  <h1>Active Reward Configuration</h1>
+  <p style="color: #AEEFFF; text-align: center; margin-bottom: 30px;">
+    Current distribution of rewards per trait category.
+  </p>
+
+  <div id="loading" style="text-align:center; color:#19ffd9; font-size:1.2em;">Loading stats...</div>
+
+  <table class="stats-table" id="statsTable" style="display:none;">
+    <thead>
+      <tr>
+        <th>Category / Trait</th>
+        <th style="text-align: right;">Reward Value ($REWARD)</th>
+      </tr>
+    </thead>
+    <tbody id="statsBody">
+      </tbody>
+  </table>
+
+  <div style="text-align: center; margin-top: 40px;">
+    <button class="btn" onclick="window.close()">Close Page</button>
+  </div>
+</div>
+
+<script>
+  async function loadStats() {
+    try {
+      // Fetch the config from your existing server endpoint
+      const res = await fetch('/api/config');
+      const data = await res.json();
+      
+      const tbody = document.getElementById('statsBody');
+      const loading = document.getElementById('loading');
+      const table = document.getElementById('statsTable');
+
+      // Clear existing
+      tbody.innerHTML = '';
+
+      // Sort categories alphabetically
+      const sortedKeys = Object.keys(data).sort();
+
+      if (sortedKeys.length === 0) {
+        loading.textContent = "No rewards configured yet.";
+        return;
+      }
+
+      let totalValue = 0;
+
+      sortedKeys.forEach(key => {
+        const reward = data[key];
+        totalValue += reward;
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td><span class="tag">${key}</span></td>
+          <td style="text-align: right; font-weight:bold; color: #19ffd9;">${reward.toLocaleString()}</td>
+        `;
+        tbody.appendChild(row);
+      });
+
+      // Optional: Add a total row at the bottom
+      /*
+      const totalRow = document.createElement('tr');
+      totalRow.style.borderTop = "2px solid #14e0e8";
+      totalRow.innerHTML = `
+          <td style="text-align:right; font-weight:bold;">TOTAL POSSIBILITIES</td>
+          <td style="text-align: right; font-weight:bold; color: #fff;">${totalValue.toLocaleString()}</td>
+      `;
+      tbody.appendChild(totalRow);
+      */
+
+      loading.style.display = 'none';
+      table.style.display = 'table';
+
+    } catch (e) {
+      document.getElementById('loading').textContent = "Error loading stats.";
+      console.error(e);
+    }
+  }
+
+  // Load on startup
+  loadStats();
+</script>
+
+</body>
+</html>

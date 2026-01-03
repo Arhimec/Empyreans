@@ -14,7 +14,8 @@ let cachedStats = {
   totalMinted: 0,
   totalSupply: MAX_NFTS,
   allNfts: [],
-  missingTraits: []
+  missingTraits: [],
+  traitCounts: {}
 };
 
 let traitCategories = [];
@@ -65,6 +66,7 @@ async function refreshStats() {
 
     let allNfts = [];
     let missingTraits = [];
+    let traitCounts = {};
 
     for (const nft of nfts) {
       let attrs = {};
@@ -74,7 +76,19 @@ async function refreshStats() {
           decoded.split(';').forEach(pair => {
             const [k, v] = pair.split(':');
             if (k && v && traitCategories.includes(k.trim())) {
-              attrs[k.trim()] = v.trim();
+              const key = k.trim();
+              const value = v.trim();
+
+              attrs[key] = value;
+
+              // Count specific trait values
+              if (!traitCounts[key]) {
+                traitCounts[key] = {};
+              }
+              if (!traitCounts[key][value]) {
+                traitCounts[key][value] = 0;
+              }
+              traitCounts[key][value]++;
             }
           });
         }
@@ -102,6 +116,7 @@ async function refreshStats() {
 
     cachedStats.allNfts = allNfts;
     cachedStats.missingTraits = missingTraits;
+    cachedStats.traitCounts = traitCounts;
     cachedStats.updated = new Date().toISOString();
 
     fs.writeFile(CACHE_FILE, JSON.stringify(cachedStats, null, 2), err => {
@@ -114,7 +129,8 @@ async function refreshStats() {
 }
 
 refreshStats();
-setInterval(refreshStats, 30000);
+// Refresh every 24 hours (24 * 60 * 60 * 1000 ms)
+setInterval(refreshStats, 86400000);
 
 app.use(express.static(__dirname));
 

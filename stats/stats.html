@@ -6,11 +6,97 @@
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css">
   <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
   <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+  <style>
+    /* Grid layout for the trait categories */
+    .traits-grid {
+      display: flex;
+      flex-direction: column; /* Stack vertically for expandable lists */
+      gap: 10px;
+      margin-top: 10px;
+      max-width: 800px; /* Limit width for readability */
+    }
+
+    /* Styles for the expandable card */
+    .trait-details {
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    /* The clickable header */
+    .trait-summary {
+      cursor: pointer;
+      padding: 15px;
+      font-weight: bold;
+      background-color: #f1f1f1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      list-style: none; /* Hides default marker in some browsers */
+      user-select: none;
+    }
+
+    /* Custom +/- indicator */
+    .trait-summary::after {
+      content: '+'; 
+      font-size: 1.2em;
+      color: #666;
+    }
+    
+    details[open] .trait-summary::after {
+      content: '-';
+    }
+
+    /* Hides default marker in Webkit browsers */
+    .trait-summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .trait-summary:hover {
+      background-color: #e9e9e9;
+    }
+
+    /* The content inside the expanded area */
+    .trait-content {
+      padding: 15px;
+      border-top: 1px solid #ddd;
+      background-color: #fff;
+    }
+
+    .trait-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+    .trait-table td {
+      padding: 6px 0;
+      border-bottom: 1px solid #eee;
+    }
+    .trait-table tr:last-child td {
+      border-bottom: none;
+    }
+    .count-cell {
+      text-align: right;
+      font-weight: bold;
+      color: #555;
+    }
+    .category-count {
+      font-weight: normal;
+      font-size: 0.85em;
+      color: #777;
+      margin-left: 10px;
+    }
+  </style>
 </head>
 <body>
   <h2>EMP-897b49 Mint Statistics</h2>
   <p>Minted so far: <span id="minted-count">Loading...</span></p>
   <p>Last refreshed: <span id="last-refreshed">never</span></p>
+
+  <h3>Trait Statistics</h3>
+  <div id="trait-stats" class="traits-grid">Loading trait data...</div>
 
   <h3>All NFTs</h3>
   <table id="nfts-table" class="display" style="width:100%"></table>
@@ -35,6 +121,52 @@
       fetch('/api/stats').then(r => r.json()).then(data => {
         $('#last-refreshed').text(data.updated || 'never');
 
+        // --- 1. Update Trait Statistics ---
+        const traitCounts = data.traitCounts || {};
+        const statsContainer = $('#trait-stats');
+        statsContainer.empty();
+
+        if (Object.keys(traitCounts).length === 0) {
+          statsContainer.html('<p>No trait data available yet.</p>');
+        } else {
+          // Sort categories alphabetically
+          Object.keys(traitCounts).sort().forEach(category => {
+            const values = traitCounts[category];
+            
+            // Calculate total items in this category for the header
+            const totalInCategory = Object.values(values).reduce((a, b) => a + b, 0);
+
+            // Build rows for this category
+            const rows = Object.entries(values)
+              .sort((a, b) => b[1] - a[1]) // Sort by count descending
+              .map(([traitName, count]) => `
+                <tr>
+                  <td>${traitName}</td>
+                  <td class="count-cell">${count}</td>
+                </tr>
+              `).join('');
+
+            // Build the expandable HTML structure
+            const html = `
+              <details class="trait-details">
+                <summary class="trait-summary">
+                  <span>
+                    ${category} 
+                    <span class="category-count">(${totalInCategory} minted)</span>
+                  </span>
+                </summary>
+                <div class="trait-content">
+                  <table class="trait-table">
+                    ${rows}
+                  </table>
+                </div>
+              </details>
+            `;
+            statsContainer.append(html);
+          });
+        }
+
+        // --- 2. Update DataTables ---
         const firstNft = data.allNfts[0] || {};
         // Setup columns: token_id + traits except "image"
         const nftColumns = [
@@ -69,9 +201,10 @@
 
     $(document).ready(() => {
       updateMintedCount();
-      setInterval(updateMintedCount, 30000);
+      setInterval(updateMintedCount, 30000); // Fast update for mint count
+      
       updateTables();
-      setInterval(updateTables, 30000);
+      setInterval(updateTables, 60000); // Slower update for heavy tables
     });
   </script>
 </body>

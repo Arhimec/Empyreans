@@ -3,8 +3,71 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NFT Collection Statistics - EMP-897b49</title>
+  <title>Empyrean Collection Statistics - EMP-897b49</title>
   <style>
+    /* --- CSS VARIABLES --- */
+    :root {
+      /* LIGHT THEME (Default) */
+      --bg-body: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --bg-container: #ffffff;
+      --bg-header: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --bg-section: #f8f9fa;
+      --bg-card: #ffffff;
+      --bg-hover: #f8f9fa;
+      --bg-thead: #fafafa;
+      
+      --text-main: #333333;
+      --text-secondary: #666666;
+      --text-header: #ffffff;
+      --text-accent: #667eea;
+      
+      --border-color: #e0e0e0;
+      --shadow-color: rgba(0,0,0,0.1);
+      --shadow-container: rgba(0,0,0,0.3);
+      
+      --btn-bg: #ffffff;
+      --btn-border: #ddd;
+      --btn-text: #555;
+      --btn-hover: #f5f5f5;
+      
+      --btn-primary-bg: #667eea;
+      --btn-primary-text: #ffffff;
+      
+      --progress-gradient: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+      --toggle-active-bg: #667eea;
+    }
+
+    /* DARK THEME (Mint & Black) */
+    [data-theme="dark"] {
+      --bg-body: #050505; /* Deep Black */
+      --bg-container: #000000; /* Pure Black container */
+      --bg-header: #000000;
+      --bg-section: #111111; /* Very dark gray for contrast */
+      --bg-card: #111111;
+      --bg-hover: #1a1a1a;
+      --bg-thead: #1a1a1a;
+      
+      --text-main: #e0e0e0;
+      --text-secondary: #888888;
+      --text-header: #00ffc3; /* Mint Header Text */
+      --text-accent: #00ffc3; /* Mint Values */
+      
+      --border-color: #333333;
+      --shadow-color: rgba(0, 255, 195, 0.05); /* Subtle Mint Glow */
+      --shadow-container: rgba(0,0,0,0.8);
+      
+      --btn-bg: #000000;
+      --btn-border: #333;
+      --btn-text: #00ffc3;
+      --btn-hover: #1a1a1a;
+      
+      --btn-primary-bg: #00ffc3; /* Mint Button */
+      --btn-primary-text: #000000; /* Black Text on Mint */
+      
+      --progress-gradient: linear-gradient(90deg, #00ffc3 0%, #00b894 100%);
+      --toggle-active-bg: #00ffc3;
+    }
+
     * {
       margin: 0;
       padding: 0;
@@ -13,28 +76,33 @@
     
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: var(--bg-body);
       min-height: 100vh;
       padding: 2rem;
-      color: #333;
+      color: var(--text-main);
+      transition: background 0.3s, color 0.3s;
     }
     
     .container {
       max-width: 1400px;
       margin: 0 auto;
-      background: white;
+      background: var(--bg-container);
       border-radius: 20px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      box-shadow: 0 20px 60px var(--shadow-container);
       overflow: hidden;
       display: flex;
       flex-direction: column;
+      transition: background 0.3s, box-shadow 0.3s;
+      border: 1px solid var(--border-color); /* Added border for dark mode definition */
     }
     
     .header {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
+      background: var(--bg-header);
+      color: var(--text-header);
       padding: 2rem;
       text-align: center;
+      transition: background 0.3s;
+      border-bottom: 1px solid var(--border-color);
     }
     
     .header h1 {
@@ -52,35 +120,38 @@
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 1.5rem;
       padding: 2rem;
-      background: #f8f9fa;
-      border-bottom: 1px solid #e0e0e0;
+      background: var(--bg-section);
+      border-bottom: 1px solid var(--border-color);
+      transition: background 0.3s;
     }
     
     .stat-card {
-      background: white;
+      background: var(--bg-card);
       padding: 1.5rem;
       border-radius: 10px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 6px var(--shadow-color);
       text-align: center;
+      transition: background 0.3s;
+      border: 1px solid var(--border-color);
     }
     
     .stat-card h3 {
-      color: #666;
+      color: var(--text-secondary);
       font-size: 0.9rem;
       text-transform: uppercase;
       margin-bottom: 0.5rem;
     }
     
     .stat-card .value {
-      color: #667eea;
+      color: var(--text-accent);
       font-size: 2.5rem;
       font-weight: bold;
     }
     
     .controls-bar {
       padding: 1.5rem 2rem;
-      background: #fff;
-      border-bottom: 1px solid #eee;
+      background: var(--bg-container);
+      border-bottom: 1px solid var(--border-color);
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -90,35 +161,36 @@
 
     .controls-group {
       display: flex;
+      align-items: center;
       gap: 0.5rem;
     }
 
     .btn {
       padding: 0.6rem 1.2rem;
       border-radius: 6px;
-      border: 1px solid #ddd;
-      background: white;
+      border: 1px solid var(--btn-border);
+      background: var(--btn-bg);
       cursor: pointer;
       font-weight: 600;
-      color: #555;
+      color: var(--btn-text);
       transition: all 0.2s;
       font-size: 0.9rem;
     }
 
     .btn:hover {
-      background: #f5f5f5;
-      border-color: #ccc;
+      background: var(--btn-hover);
+      border-color: var(--text-accent);
     }
 
     .btn-primary {
-      background: #667eea;
-      border-color: #667eea;
-      color: white;
+      background: var(--btn-primary-bg);
+      border-color: var(--btn-primary-bg);
+      color: var(--btn-primary-text);
     }
 
     .btn-primary:hover {
-      background: #5a6fd1;
-      border-color: #5a6fd1;
+      opacity: 0.9;
+      background: var(--btn-primary-bg);
     }
     
     .content {
@@ -131,25 +203,25 @@
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
       gap: 1.5rem;
-      align-items: start; /* Prevents stretching to match height */
+      align-items: start;
     }
     
     .trait-category {
-      background: white;
+      background: var(--bg-card);
       border-radius: 10px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 6px var(--shadow-color);
       overflow: hidden;
-      border: 1px solid #eee;
-      transition: box-shadow 0.2s;
+      border: 1px solid var(--border-color);
+      transition: box-shadow 0.2s, background 0.3s, border-color 0.3s;
     }
     
     /* Accordion Header Styles */
     .trait-category h3 {
-      background: #f8f9fa;
+      background: var(--bg-section);
       padding: 1rem;
-      color: #444;
+      color: var(--text-main);
       font-size: 1.1rem;
-      border-bottom: 2px solid #667eea;
+      border-bottom: 2px solid var(--text-accent);
       cursor: pointer;
       display: flex;
       justify-content: space-between;
@@ -159,12 +231,13 @@
     }
     
     .trait-category h3:hover {
-      background: #f0f0f0;
+      background: var(--bg-hover);
     }
 
     .trait-category h3 .toggle-icon {
       font-size: 0.8rem;
       transition: transform 0.3s ease;
+      color: var(--text-accent);
     }
     
     /* Collapsed state class */
@@ -181,11 +254,12 @@
     }
 
     .trait-count-badge {
-      background: #e9ecef;
+      background: var(--bg-hover);
+      border: 1px solid var(--border-color);
       padding: 0.2rem 0.6rem;
       border-radius: 12px;
       font-size: 0.8rem;
-      color: #666;
+      color: var(--text-secondary);
       margin-left: auto;
       margin-right: 0.5rem;
     }
@@ -196,14 +270,15 @@
     }
     
     thead {
-      background: #fafafa;
-      color: #666;
+      background: var(--bg-thead);
+      color: var(--text-secondary);
     }
     
     th, td {
       padding: 0.8rem 1rem;
       text-align: left;
       font-size: 0.9rem;
+      color: var(--text-main);
     }
     
     th {
@@ -214,11 +289,11 @@
     }
     
     tbody tr {
-      border-bottom: 1px solid #f0f0f0;
+      border-bottom: 1px solid var(--bg-section);
     }
     
     tbody tr:hover {
-      background: #f8f9fa;
+      background: var(--bg-hover);
     }
     
     tbody tr:last-child {
@@ -226,7 +301,7 @@
     }
     
     .percentage {
-      color: #667eea;
+      color: var(--text-accent);
       font-weight: bold;
       width: 70px;
       text-align: right;
@@ -239,7 +314,8 @@
     .progress-bar {
       width: 100%;
       height: 6px;
-      background: #e0e0e0;
+      background: var(--bg-section);
+      border: 1px solid var(--border-color);
       border-radius: 3px;
       overflow: hidden;
       margin-top: 0.4rem;
@@ -247,23 +323,23 @@
     
     .progress-fill {
       height: 100%;
-      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+      background: var(--progress-gradient);
     }
     
     .loading {
       text-align: center;
       padding: 3rem;
-      color: #666;
+      color: var(--text-secondary);
       width: 100%;
     }
     
     .timestamp {
       text-align: center;
-      color: #999;
+      color: var(--text-secondary);
       padding: 1rem;
       font-size: 0.9rem;
-      background: #f8f9fa;
-      border-top: 1px solid #eee;
+      background: var(--bg-section);
+      border-top: 1px solid var(--border-color);
     }
     
     .error {
@@ -274,13 +350,64 @@
       margin: 1rem;
       text-align: center;
     }
+
+    /* --- SWITCH SLIDER STYLE --- */
+    .theme-switch-wrapper {
+      display: flex;
+      align-items: center;
+      margin-right: 1rem;
+    }
+    
+    .theme-switch {
+      display: inline-block;
+      height: 24px;
+      position: relative;
+      width: 46px;
+      margin-right: 8px;
+    }
+    
+    .theme-switch input {
+      display: none;
+    }
+    
+    .slider {
+      background-color: #ccc;
+      bottom: 0;
+      cursor: pointer;
+      left: 0;
+      position: absolute;
+      right: 0;
+      top: 0;
+      transition: .4s;
+      border-radius: 34px;
+    }
+    
+    .slider:before {
+      background-color: #fff;
+      bottom: 4px;
+      content: "";
+      height: 16px;
+      left: 4px;
+      position: absolute;
+      transition: .4s;
+      width: 16px;
+      border-radius: 50%;
+    }
+    
+    input:checked + .slider {
+      background-color: var(--toggle-active-bg);
+    }
+    
+    input:checked + .slider:before {
+      transform: translateX(22px);
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
-      <h1>🚀 NFT Collection Statistics</h1>
-      <p>EMP-897b49 Collection Analytics</p>
+      <h1>Empyrean Collection Analytics</h1>
+      <p>Collection ID: EMP-897b49</p>
     </div>
     
     <div class="stats-summary" id="summary">
@@ -288,6 +415,16 @@
     </div>
 
     <div class="controls-bar">
+      <div class="controls-group">
+        <div class="theme-switch-wrapper">
+           <label class="theme-switch" for="checkbox">
+            <input type="checkbox" id="checkbox" />
+            <div class="slider"></div>
+          </label>
+          <span style="font-size: 0.9rem; font-weight: 600; color: var(--text-secondary)">Dark Mode</span>
+        </div>
+      </div>
+
       <div class="controls-group">
         <button class="btn btn-primary" onclick="exportToCSV()">📥 Download CSV</button>
       </div>
@@ -307,6 +444,30 @@
   </div>
 
   <script>
+    // --- THEME LOGIC ---
+    const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
+    const currentTheme = localStorage.getItem('theme');
+
+    if (currentTheme) {
+        document.documentElement.setAttribute('data-theme', currentTheme);
+        if (currentTheme === 'dark') {
+            toggleSwitch.checked = true;
+        }
+    }
+
+    function switchTheme(e) {
+        if (e.target.checked) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            document.documentElement.setAttribute('data-theme', 'light');
+            localStorage.setItem('theme', 'light');
+        }
+    }
+
+    toggleSwitch.addEventListener('change', switchTheme, false);
+    // -------------------
+
     // Global variables to store data for CSV export
     let globalTraitData = null;
     let globalTotalNFTs = 0;
@@ -368,7 +529,10 @@
       sortedCategories.forEach(category => {
         const traitsObj = traitData[category];
         const sortedTraits = Object.entries(traitsObj).sort((a, b) => b[1] - a[1]);
-          
+        
+        // Calculate Total NFTs in this Category
+        const categoryTotal = Object.values(traitsObj).reduce((sum, count) => sum + count, 0);
+
         let rowsHtml = '';
         sortedTraits.forEach(([traitName, count]) => {
           const percentage = totalNFTs > 0 ? ((count / totalNFTs) * 100).toFixed(2) : 0;
@@ -386,12 +550,11 @@
           `;
         });
         
-        // Note the onclick handler for the header
         const categoryHtml = `
           <div class="trait-category collapsed" id="cat-${category.replace(/\s+/g, '-')}">
             <h3 onclick="toggleCategory(this)">
               <span>${category}</span>
-              <span class="trait-count-badge">${sortedTraits.length} traits</span>
+              <span class="trait-count-badge">Total: ${categoryTotal}</span>
               <span class="toggle-icon">▼</span>
             </h3>
             <table>

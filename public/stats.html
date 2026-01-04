@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Empyrean Collection Statistics - EMP-897b49</title>
+  <title>NFT Collection Statistics - EMP-897b49</title>
   <style>
     /* --- CSS VARIABLES --- */
     :root {
@@ -35,25 +35,27 @@
       
       --progress-gradient: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
       --toggle-active-bg: #667eea;
+      
+      --input-bg: #ffffff;
     }
 
     /* DARK THEME (Mint & Black) */
     [data-theme="dark"] {
-      --bg-body: #050505; /* Deep Black */
-      --bg-container: #000000; /* Pure Black container */
+      --bg-body: #050505;
+      --bg-container: #000000;
       --bg-header: #000000;
-      --bg-section: #111111; /* Very dark gray for contrast */
+      --bg-section: #111111;
       --bg-card: #111111;
       --bg-hover: #1a1a1a;
       --bg-thead: #1a1a1a;
       
       --text-main: #e0e0e0;
       --text-secondary: #888888;
-      --text-header: #00ffc3; /* Mint Header Text */
-      --text-accent: #00ffc3; /* Mint Values */
+      --text-header: #00ffc3;
+      --text-accent: #00ffc3;
       
       --border-color: #333333;
-      --shadow-color: rgba(0, 255, 195, 0.05); /* Subtle Mint Glow */
+      --shadow-color: rgba(0, 255, 195, 0.05);
       --shadow-container: rgba(0,0,0,0.8);
       
       --btn-bg: #000000;
@@ -61,11 +63,13 @@
       --btn-text: #00ffc3;
       --btn-hover: #1a1a1a;
       
-      --btn-primary-bg: #00ffc3; /* Mint Button */
-      --btn-primary-text: #000000; /* Black Text on Mint */
+      --btn-primary-bg: #00ffc3;
+      --btn-primary-text: #000000;
       
       --progress-gradient: linear-gradient(90deg, #00ffc3 0%, #00b894 100%);
       --toggle-active-bg: #00ffc3;
+      
+      --input-bg: #1a1a1a;
     }
 
     * {
@@ -93,7 +97,7 @@
       display: flex;
       flex-direction: column;
       transition: background 0.3s, box-shadow 0.3s;
-      border: 1px solid var(--border-color); /* Added border for dark mode definition */
+      border: 1px solid var(--border-color);
     }
     
     .header {
@@ -163,6 +167,7 @@
       display: flex;
       align-items: center;
       gap: 0.5rem;
+      flex-wrap: wrap;
     }
 
     .btn {
@@ -193,12 +198,29 @@
       background: var(--btn-primary-bg);
     }
     
+    /* --- SEARCH INPUT STYLE --- */
+    .search-input {
+      padding: 0.6rem 1rem;
+      border-radius: 6px;
+      border: 1px solid var(--btn-border);
+      background: var(--input-bg);
+      color: var(--text-main);
+      font-size: 0.9rem;
+      width: 250px;
+      transition: all 0.2s;
+    }
+    
+    .search-input:focus {
+      outline: none;
+      border-color: var(--text-accent);
+      box-shadow: 0 0 0 2px var(--shadow-color);
+    }
+
     .content {
       padding: 2rem;
       flex: 1;
     }
     
-    /* Grid layout for trait tables */
     .traits-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
@@ -215,7 +237,6 @@
       transition: box-shadow 0.2s, background 0.3s, border-color 0.3s;
     }
     
-    /* Accordion Header Styles */
     .trait-category h3 {
       background: var(--bg-section);
       padding: 1rem;
@@ -240,7 +261,6 @@
       color: var(--text-accent);
     }
     
-    /* Collapsed state class */
     .trait-category.collapsed h3 {
       border-bottom: 1px solid transparent;
     }
@@ -406,8 +426,8 @@
 <body>
   <div class="container">
     <div class="header">
-      <h1>Empyrean Collection Analytics</h1>
-      <p>Collection ID: EMP-897b49</p>
+      <h1>🚀 NFT Collection Statistics</h1>
+      <p>EMP-897b49 Collection Analytics</p>
     </div>
     
     <div class="stats-summary" id="summary">
@@ -423,6 +443,10 @@
           </label>
           <span style="font-size: 0.9rem; font-weight: 600; color: var(--text-secondary)">Dark Mode</span>
         </div>
+      </div>
+
+      <div class="controls-group">
+        <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search traits or categories..." oninput="filterTraits()">
       </div>
 
       <div class="controls-group">
@@ -468,7 +492,7 @@
     toggleSwitch.addEventListener('change', switchTheme, false);
     // -------------------
 
-    // Global variables to store data for CSV export
+    // Global variables
     let globalTraitData = null;
     let globalTotalNFTs = 0;
 
@@ -530,7 +554,6 @@
         const traitsObj = traitData[category];
         const sortedTraits = Object.entries(traitsObj).sort((a, b) => b[1] - a[1]);
         
-        // Calculate Total NFTs in this Category
         const categoryTotal = Object.values(traitsObj).reduce((sum, count) => sum + count, 0);
 
         let rowsHtml = '';
@@ -566,7 +589,7 @@
                   <th>Freq</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody class="trait-rows">
                 ${rowsHtml}
               </tbody>
             </table>
@@ -577,13 +600,57 @@
       });
     }
 
-    // Toggle specific category
+    // --- SEARCH FUNCTION (Updated) ---
+    function filterTraits() {
+      const input = document.getElementById('searchInput');
+      const filter = input.value.toLowerCase();
+      const categories = document.getElementsByClassName('trait-category');
+
+      for (let i = 0; i < categories.length; i++) {
+        const category = categories[i];
+        
+        // Check if Category Name matches
+        const categoryNameEl = category.querySelector('h3 span:first-child');
+        const categoryName = categoryNameEl ? categoryNameEl.textContent.toLowerCase() : "";
+        const isCategoryMatch = categoryName.indexOf(filter) > -1;
+
+        const rows = category.getElementsByTagName('tr');
+        let hasVisibleRows = false;
+
+        // Start from j=1 to skip the header row
+        for (let j = 1; j < rows.length; j++) {
+          const td = rows[j].getElementsByTagName('td')[0];
+          if (td) {
+            const txtValue = td.textContent || td.innerText;
+            // Show row if: Category matches OR Trait Name matches
+            if (isCategoryMatch || txtValue.toLowerCase().indexOf(filter) > -1) {
+              rows[j].style.display = "";
+              hasVisibleRows = true;
+            } else {
+              rows[j].style.display = "none";
+            }
+          }
+        }
+
+        // Show/Hide Category Container
+        if (filter === "") {
+          category.style.display = "";
+        } else {
+          if (hasVisibleRows) {
+            category.style.display = "";
+            category.classList.remove('collapsed'); // Auto-expand matching categories
+          } else {
+            category.style.display = "none";
+          }
+        }
+      }
+    }
+
     function toggleCategory(headerElement) {
       const container = headerElement.parentElement;
       container.classList.toggle('collapsed');
     }
 
-    // Toggle all categories
     function toggleAll(shouldCollapse) {
       const categories = document.querySelectorAll('.trait-category');
       categories.forEach(cat => {
@@ -595,34 +662,23 @@
       });
     }
 
-    // Export to CSV function
     function exportToCSV() {
       if (!globalTraitData) {
         alert("Data not loaded yet");
         return;
       }
-
-      // CSV Header
       let csvContent = "Category,Trait Name,Count,Percentage\n";
-
-      // Iterate and build rows
       const sortedCategories = Object.keys(globalTraitData).sort();
       sortedCategories.forEach(category => {
         const traitsObj = globalTraitData[category];
-        const sortedTraits = Object.entries(traitsObj).sort((a, b) => b[1] - a[1]); // Sort by count desc
-
+        const sortedTraits = Object.entries(traitsObj).sort((a, b) => b[1] - a[1]);
         sortedTraits.forEach(([traitName, count]) => {
           const percentage = globalTotalNFTs > 0 ? ((count / globalTotalNFTs) * 100).toFixed(2) : 0;
-          
-          // Escape quotes in names if necessary
           const safeCategory = `"${category.replace(/"/g, '""')}"`;
           const safeTrait = `"${traitName.replace(/"/g, '""')}"`;
-          
           csvContent += `${safeCategory},${safeTrait},${count},${percentage}%\n`;
         });
       });
-
-      // Create download link
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");

@@ -513,7 +513,7 @@
           </div>
           <div class="stat-card">
             <h3>Categories</h3>
-            <div class="value">${Object.keys(data.categories || {}).length}</div>
+            <div class="value" id="category-count">${Object.keys(data.categories || {}).length}</div>
           </div>
           <div class="stat-card">
             <h3>Coverage</h3>
@@ -534,6 +534,30 @@
         }).then(traitData => {
            globalTraitData = traitData;
            renderTraits(traitData, globalTotalNFTs);
+
+           // --- SYNC CATEGORIES COUNT ---
+           // We explicitly update the category count based on the loaded keys
+           const actualCategoryCount = Object.keys(traitData).length;
+           document.getElementById('category-count').textContent = actualCategoryCount;
+           // ------------------------------
+
+           // --- CALCULATE TOTAL UNIQUE TRAITS & ADD CARD ---
+           let totalUniqueTraits = 0;
+           Object.values(traitData).forEach(cat => totalUniqueTraits += Object.keys(cat).length);
+           const totalPossible = 408;
+
+           const newCard = document.createElement('div');
+           newCard.className = 'stat-card';
+           newCard.innerHTML = `
+             <h3>Unique Traits</h3>
+             <div class="value">
+                ${totalUniqueTraits} 
+                <span style="font-size: 0.5em; vertical-align: middle; opacity: 0.7;">/ ${totalPossible}</span>
+             </div>
+           `;
+           document.getElementById('summary').appendChild(newCard);
+           // -----------------------------------------------------
+
         });
       })
       .catch(error => {
@@ -600,7 +624,7 @@
       });
     }
 
-    // --- SEARCH FUNCTION (Updated) ---
+    // --- SEARCH FUNCTION ---
     function filterTraits() {
       const input = document.getElementById('searchInput');
       const filter = input.value.toLowerCase();

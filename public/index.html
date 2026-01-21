@@ -91,12 +91,17 @@
       font-size: 1.8em;
       font-weight: 700;
       line-height: 1.2;
+      /* Allow flex column for rank + count */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
 
     /* RANK BADGES */
     .rank-badge {
       display: inline-block;
-      font-size: 0.8em;
+      font-size: 0.6em; /* Adjusted for container scaling */
       padding: 8px 16px;
       border-radius: 20px;
       color: #fff;
@@ -141,7 +146,7 @@
 
   <div class="glow-card metric-card">
     <div class="metric-title">Wallet Rank</div>
-    <div class="metric-value" id="walletRankDisplay" style="font-size: 1.2em;">—</div>
+    <div class="metric-value" id="walletRankDisplay" style="font-size: 1.5em;">—</div>
   </div>
 
   <div class="glow-card" id="publicCalculator">
@@ -226,10 +231,8 @@
 
 <script>
 const empCollectionId = "EMP-897b49";
-// --- NEW CONFIGURATION ---
 const fhodlCollectionId = "FHODL-a9ad67";
 const fhodlRewardRate = 1400;
-// -------------------------
 
 const mintedCountSpan = document.getElementById('mintedCount');
 const walletRankDisplay = document.getElementById('walletRankDisplay');
@@ -356,8 +359,10 @@ addRewardForm.addEventListener('submit', async e => {
 calculateBtn.addEventListener('click', async () => {
   const wallet = walletInput.value.trim();
   totalRewardEl.textContent = '—';
+  
+  // Reset Rank Display
   walletRankDisplay.innerHTML = 'Loading...';
-  walletRankDisplay.className = 'metric-value';
+  
   categoryTotalsEl.innerHTML = '';
   categoriesContainer.innerHTML = '';
   excludedList.innerHTML = '';
@@ -370,74 +375,73 @@ calculateBtn.addEventListener('click', async () => {
   totalRewardEl.textContent = 'Loading...';
 
   try {
-    // 1. Fetch EMP-897b49 data from backend (existing logic)
     const empPromise = fetch(`/api/rewards/${wallet}/${empCollectionId}`);
-    
-    // 2. Fetch FHODL-a9ad67 data from public API (new logic)
     const fhodlPromise = fetch(`https://api.multiversx.com/accounts/${wallet}/nfts?collection=${fhodlCollectionId}&size=2000`);
 
-    // Await both
     const [empRes, fhodlRes] = await Promise.all([empPromise, fhodlPromise]);
     
-    // Process EMP Data
     const empData = await empRes.json();
-    if (!empRes.ok) {
-        throw new Error(empData.error || "Error fetching EMP data");
-    }
+    if (!empRes.ok) throw new Error(empData.error || "Error fetching EMP data");
 
-    // Process FHODL Data
-    const fhodlNFTs = await fhodlRes.json(); // Array of NFTs
+    const fhodlNFTs = await fhodlRes.json();
     const fhodlCount = Array.isArray(fhodlNFTs) ? fhodlNFTs.length : 0;
     const fhodlTotalReward = fhodlCount * fhodlRewardRate;
 
-    // --- MERGE TOTALS ---
     const empTotalReward = parseFloat(empData.totalReward) || 0;
     const grandTotalReward = empTotalReward + fhodlTotalReward;
 
     totalRewardEl.textContent = grandTotalReward.toLocaleString();
 
-    // --- MERGE RANK (UPDATED: EXCLUDE FHODL COUNT) ---
+    // --- RANK LOGIC (EMP Only) ---
     const includedCount = empData.includedNFTs ? empData.includedNFTs.length : 0;
     const excludedCount = empData.excludedNFTs ? empData.excludedNFTs.length : 0;
-    
-    // Logic Changed Here: Only EMP collection counts for rank
-    const totalNFTs = includedCount + excludedCount;
+    const totalEmpNFTs = includedCount + excludedCount;
     
     let rankName = 'No Rank';
     let rankClass = 'rank-none';
 
-    if (totalNFTs >= 500) { rankName = 'Mega Whale'; rankClass = 'rank-mega-whale'; }
-    else if (totalNFTs >= 250) { rankName = 'Whale'; rankClass = 'rank-whale'; }
-    else if (totalNFTs >= 100) { rankName = 'Shark'; rankClass = 'rank-shark'; }
-    else if (totalNFTs >= 50) { rankName = 'Dolphin'; rankClass = 'rank-dolphin'; }
-    else if (totalNFTs >= 25) { rankName = 'Crab'; rankClass = 'rank-crab'; }
-    else if (totalNFTs >= 10) { rankName = 'Fish'; rankClass = 'rank-fish'; }
-    else if (totalNFTs >= 1) { rankName = 'Plankton'; rankClass = 'rank-plankton'; }
+    if (totalEmpNFTs >= 500) { rankName = 'Mega Whale'; rankClass = 'rank-mega-whale'; }
+    else if (totalEmpNFTs >= 250) { rankName = 'Whale'; rankClass = 'rank-whale'; }
+    else if (totalEmpNFTs >= 100) { rankName = 'Shark'; rankClass = 'rank-shark'; }
+    else if (totalEmpNFTs >= 50) { rankName = 'Dolphin'; rankClass = 'rank-dolphin'; }
+    else if (totalEmpNFTs >= 25) { rankName = 'Crab'; rankClass = 'rank-crab'; }
+    else if (totalEmpNFTs >= 10) { rankName = 'Fish'; rankClass = 'rank-fish'; }
+    else if (totalEmpNFTs >= 1) { rankName = 'Plankton'; rankClass = 'rank-plankton'; }
     
-    walletRankDisplay.textContent = rankName;
-    if (totalNFTs >= 1) {
-        walletRankDisplay.className = `rank-badge ${rankClass}`;
+    // --- DISPLAY RANK & COUNT ---
+    walletRankDisplay.innerHTML = ''; // Clear loading
+    if (totalEmpNFTs >= 1) {
+        // Create Badge
+        const badge = document.createElement('span');
+        badge.className = `rank-badge ${rankClass}`;
+        badge.textContent = rankName;
+        
+        // Create Count Label
+        const countLabel = document.createElement('div');
+        countLabel.style.fontSize = '0.5em';
+        countLabel.style.marginTop = '8px';
+        countLabel.style.fontWeight = '400';
+        countLabel.style.opacity = '0.8';
+        countLabel.textContent = `${totalEmpNFTs} EMP NFTs`;
+
+        walletRankDisplay.appendChild(badge);
+        walletRankDisplay.appendChild(countLabel);
     } else {
-        walletRankDisplay.textContent = "No NFTs";
-        walletRankDisplay.className = "metric-value";
+        walletRankDisplay.textContent = "No EMP NFTs";
     }
 
-    // --- DISPLAY CATEGORIES ---
+    // --- CATEGORIES ---
     categoryTotalsEl.innerHTML = '';
     
-    // 1. FHODL Category (New)
     if (fhodlCount > 0) {
         categoryTotalsEl.innerHTML += `<li><strong>FHODL:</strong> ${fhodlTotalReward} $REWARD from ${fhodlCount} NFT${fhodlCount !== 1 ? 's' : ''}</li>`;
     }
 
-    // 2. Existing EMP Categories
     for (const [cat, info] of Object.entries(empData.categorySums || {})) {
       categoryTotalsEl.innerHTML += `<li><strong>${cat}:</strong> ${info.reward} $REWARD from ${info.count} NFT${info.count !== 1 ? 's' : ''}</li>`;
     }
 
     const categoriesMap = {};
-    
-    // Add FHODL to map
     if (fhodlCount > 0) {
         categoriesMap["FHODL"] = fhodlNFTs.map(nft => ({
             name: nft.name || nft.identifier,
@@ -446,7 +450,6 @@ calculateBtn.addEventListener('click', async () => {
         }));
     }
 
-    // Add EMP to map
     (empData.includedNFTs || []).forEach(nft => {
       nft.categories.forEach(cat => {
         if (!categoriesMap[cat]) categoriesMap[cat] = [];
@@ -456,9 +459,7 @@ calculateBtn.addEventListener('click', async () => {
 
     categoriesContainer.innerHTML = '';
     for (const [category, nfts] of Object.entries(categoriesMap)) {
-      // Logic for count: check backend sums first, fallback to array length (needed for FHODL)
       const count = empData.categorySums?.[category]?.count || nfts.length;
-      
       const catDetails = document.createElement('details');
       catDetails.className = "collapsible-cat";
       const catSummary = document.createElement('summary');
@@ -469,7 +470,6 @@ calculateBtn.addEventListener('click', async () => {
       for (const nft of nfts) {
         const nftDetails = document.createElement('details');
         nftDetails.className = "collapsible-nft";
-
         const nftSummary = document.createElement('summary');
         nftSummary.innerHTML = `${nft.name} (Reward: ${nft.reward})`;
         nftDetails.appendChild(nftSummary);
@@ -509,12 +509,11 @@ calculateBtn.addEventListener('click', async () => {
   }
 });
 
-
+// ... Resync and Load logic remains same ...
 document.getElementById('resyncCollectionBtn').addEventListener('click', async () => {
   try {
     const res = await fetch(`/api/all-traits/${empCollectionId}`);
     const categories = await res.json();
-    let addedCount = 0;
     for (const category of categories) {
       if (!rewardsTableBody.querySelector(`input[value="${category}"]`)) {
         await fetch('/api/config', {
@@ -522,10 +521,9 @@ document.getElementById('resyncCollectionBtn').addEventListener('click', async (
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ category, reward: 0 }),
         });
-        addedCount++;
       }
     }
-    alert(`Resync complete. Added ${addedCount} categories.`);
+    alert(`Resync complete.`);
     await loadConfig();
   } catch (e) {
     alert('Resync failed: ' + e.message);
@@ -537,27 +535,17 @@ loadMintedCount();
 
 async function loadMintedCount() {
   const mintedCountSpan = document.getElementById('mintedCount');
-
   async function fetchCount() {
     mintedCountSpan.textContent = 'Loading...';
     try {
       const res = await fetch(`https://api.multiversx.com/nfts/count?collection=${empCollectionId}`);
-      if (!res.ok) {
-        mintedCountSpan.textContent = 'N/A';
-        return;
-      }
+      if (!res.ok) { mintedCountSpan.textContent = 'N/A'; return; }
       const text = await res.text();
       const count = parseInt(text.trim());
-      if (!isNaN(count)) {
-        mintedCountSpan.textContent = count.toLocaleString();
-      } else {
-        mintedCountSpan.textContent = 'N/A';
-      }
-    } catch (e) {
-      mintedCountSpan.textContent = 'Error';
-    }
+      if (!isNaN(count)) mintedCountSpan.textContent = count.toLocaleString();
+      else mintedCountSpan.textContent = 'N/A';
+    } catch (e) { mintedCountSpan.textContent = 'Error'; }
   }
-  
   await fetchCount();
   setInterval(fetchCount, 30000); 
 }

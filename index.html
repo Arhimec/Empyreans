@@ -7,10 +7,32 @@
     body { font-family: Arial, sans-serif; margin: 20px; }
     label, input, button { font-size: 1.1em; }
     input { margin-right: 8px; padding: 6px; width: 350px; }
-    button { padding: 6px 12px; }
+    button { padding: 6px 12px; cursor: pointer; }
     .results { margin-top: 20px; }
     .nft { margin-bottom: 12px; border-bottom: 1px solid #ccc; padding-bottom: 10px; }
     .traits { margin-left: 20px; font-size: 0.95em; color: #333; }
+    
+    /* Rank Badge Styles */
+    .rank-badge {
+      display: inline-block;
+      padding: 5px 12px;
+      border-radius: 15px;
+      color: white;
+      font-weight: bold;
+      font-size: 0.9em;
+      margin-left: 10px;
+      text-transform: uppercase;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .badge-mega-whale { background: linear-gradient(135deg, #a728be, #f8c925); border: 1px solid #ffd700; }
+    .badge-whale { background: linear-gradient(135deg, #0f2027, #2c5364); }
+    .badge-shark { background: linear-gradient(135deg, #11998e, #38ef7d); }
+    .badge-dolphin { background: linear-gradient(135deg, #2193b0, #6dd5ed); }
+    .badge-crab { background: linear-gradient(135deg, #ff416c, #ff4b2b); }
+    .badge-fish { background: linear-gradient(135deg, #f7971e, #ffd200); color: #333; }
+    .badge-plankton { background: linear-gradient(135deg, #56ab2f, #a8e063); color: #333; }
+    .badge-none { background: #ccc; color: #666; }
   </style>
 </head>
 <body>
@@ -21,7 +43,8 @@
   <input type="text" id="wallet" placeholder="erd1xyz..." />
   <button id="submitBtn">Submit</button>
 
-<a href="traits-sum.html" target="_blank" rel="noopener">Open Trait Summary</a>
+  <br/><br/>
+  <a href="traits-sum.html" target="_blank" rel="noopener">Open Trait Summary</a>
 
   <div class="results" id="results"></div>
 
@@ -43,7 +66,43 @@
         const data = await response.json();
 
         if (response.ok) {
+          // 1. Calculate the Rank based on NFT count
+          const nftCount = data.nfts ? data.nfts.length : 0;
+          let rankName = 'No Rank';
+          let rankClass = 'badge-none';
+
+          if (nftCount >= 500) {
+            rankName = '🐋 Mega Whale';
+            rankClass = 'badge-mega-whale';
+          } else if (nftCount >= 250) {
+            rankName = '🐳 Whale';
+            rankClass = 'badge-whale';
+          } else if (nftCount >= 100) {
+            rankName = '🦈 Shark';
+            rankClass = 'badge-shark';
+          } else if (nftCount >= 50) {
+            rankName = '🐬 Dolphin';
+            rankClass = 'badge-dolphin';
+          } else if (nftCount >= 25) {
+            rankName = '🦀 Crab';
+            rankClass = 'badge-crab';
+          } else if (nftCount >= 10) {
+            rankName = '🐠 Fish';
+            rankClass = 'badge-fish';
+          } else if (nftCount >= 1) {
+            rankName = '🦠 Plankton';
+            rankClass = 'badge-plankton';
+          }
+
+          // 2. Build the HTML output
           let html = `<h3>Total Weekly Reward: ${data.totalReward}</h3>`;
+          
+          // Display Count and Rank
+          html += `<p>
+                     <strong>NFTs Owned:</strong> ${nftCount} 
+                     <span class="rank-badge ${rankClass}">${rankName}</span>
+                   </p>`;
+          
           html += `<h4>NFTs and Traits:</h4>`;
 
           data.nfts.forEach(nft => {

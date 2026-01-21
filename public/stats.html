@@ -502,10 +502,15 @@
       .then(data => {
         globalTotalNFTs = data.totalNFTs || data.total || 0;
         
+        // --- CHANGED LOGIC HERE ---
+        const maxSupply = 10000;
+        const remainingSupply = maxSupply - globalTotalNFTs;
+        // ---------------------------
+
         const summaryHtml = `
           <div class="stat-card">
-            <h3>Total NFTs</h3>
-            <div class="value">${globalTotalNFTs}</div>
+            <h3>Remaining Supply</h3>
+            <div class="value">${remainingSupply}</div>
           </div>
           <div class="stat-card">
             <h3>Categorized</h3>
@@ -536,15 +541,13 @@
            renderTraits(traitData, globalTotalNFTs);
 
            // --- SYNC CATEGORIES COUNT ---
-           // We explicitly update the category count based on the loaded keys
            const actualCategoryCount = Object.keys(traitData).length;
            document.getElementById('category-count').textContent = actualCategoryCount;
-           // ------------------------------
 
-           // --- CALCULATE TOTAL UNIQUE TRAITS & ADD CARD ---
+           // --- TOTAL UNIQUE TRAITS & ADD CARD ---
            let totalUniqueTraits = 0;
            Object.values(traitData).forEach(cat => totalUniqueTraits += Object.keys(cat).length);
-           const totalPossible = 408;
+           const totalPossible = 370;
 
            const newCard = document.createElement('div');
            newCard.className = 'stat-card';
@@ -556,7 +559,6 @@
              </div>
            `;
            document.getElementById('summary').appendChild(newCard);
-           // -----------------------------------------------------
 
         });
       })

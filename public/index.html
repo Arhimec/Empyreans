@@ -18,7 +18,7 @@
     input { 
       padding: 10px; 
       width: 100%;
-      max-width: 100%; /* Ensure it never breaks mobile width */
+      max-width: 100%; 
       margin-bottom: 10px;
       border: 1px solid #ccc;
       border-radius: 4px;
@@ -30,25 +30,24 @@
       max-width: 100%;
     }
 
-    /* GRID SYSTEM (2x3 Layout) */
+    /* GRID SYSTEM */
     .dashboard-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr); /* 2 columns Desktop */
-      grid-auto-rows: min-content; /* Row height adjusts to content */
-      gap: 30px; /* Increased gap to prevent glow overlap */
+      grid-template-columns: repeat(2, 1fr);
+      grid-auto-rows: min-content;
+      gap: 30px;
       max-width: 1200px;
       margin: 30px auto;
       padding: 0 20px;
     }
 
-    /* MOBILE ADJUSTMENTS (1 Column) */
+    /* MOBILE ADJUSTMENTS */
     @media (max-width: 768px) {
       .dashboard-grid {
         grid-template-columns: 1fr;
         padding: 0 15px;
-        gap: 25px; /* Vertical gap for mobile */
+        gap: 25px;
       }
-      
       .header {
         flex-direction: column;
         text-align: center;
@@ -56,29 +55,28 @@
       }
     }
 
-    /* CARD UTILITIES - Fixes Overlap */
+    /* CARD UTILITIES */
     .glow-card, .glow-panel {
-      height: auto !important; /* Force auto height to fit content */
+      height: auto !important;
       min-height: 100%;
       width: 100%;
-      overflow: hidden; /* Prevent content spilling */
+      overflow: hidden;
       padding: 20px;
       border-radius: 12px;
-      position: relative; /* Ensure stacking context */
-      background: rgba(0,0,0,0.4); /* Fallback background */
-      /* Ensure external CSS doesn't force absolute positioning */
+      position: relative;
+      background: rgba(0,0,0,0.4);
       top: auto; 
       left: auto;
     }
 
-    /* METRIC CARDS (Top Row) */
+    /* METRIC CARDS */
     .metric-card {
       text-align: center;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      min-height: 120px; /* Min height for visual balance */
+      min-height: 120px;
     }
     
     .metric-title {
@@ -137,7 +135,7 @@
 <div class="dashboard-grid">
   
   <div class="glow-card metric-card">
-    <div class="metric-title">Minted by now</div>
+    <div class="metric-title">Minted by now (EMP)</div>
     <div class="metric-value" id="mintedCount">Loading...</div>
   </div>
 
@@ -227,7 +225,11 @@
 </div>
 
 <script>
-const collectionId = "EMP-897b49";
+const empCollectionId = "EMP-897b49";
+// --- NEW CONFIGURATION ---
+const fhodlCollectionId = "FHODL-a9ad67";
+const fhodlRewardRate = 1400;
+// -------------------------
 
 const mintedCountSpan = document.getElementById('mintedCount');
 const walletRankDisplay = document.getElementById('walletRankDisplay');
@@ -368,20 +370,37 @@ calculateBtn.addEventListener('click', async () => {
   totalRewardEl.textContent = 'Loading...';
 
   try {
-    const res = await fetch(`/api/rewards/${wallet}/${collectionId}`);
-    const data = await res.json();
+    // 1. Fetch EMP-897b49 data from backend (existing logic)
+    const empPromise = fetch(`/api/rewards/${wallet}/${empCollectionId}`);
+    
+    // 2. Fetch FHODL-a9ad67 data from public API (new logic)
+    const fhodlPromise = fetch(`https://api.multiversx.com/accounts/${wallet}/nfts?collection=${fhodlCollectionId}&size=2000`);
 
-    if (!res.ok || !data) {
-      totalRewardEl.textContent = 'Error';
-      walletRankDisplay.innerHTML = 'Error';
-      return;
+    // Await both
+    const [empRes, fhodlRes] = await Promise.all([empPromise, fhodlPromise]);
+    
+    // Process EMP Data
+    const empData = await empRes.json();
+    if (!empRes.ok) {
+        throw new Error(empData.error || "Error fetching EMP data");
     }
 
-    totalRewardEl.textContent = data.totalReward;
+    // Process FHODL Data
+    const fhodlNFTs = await fhodlRes.json(); // Array of NFTs
+    const fhodlCount = Array.isArray(fhodlNFTs) ? fhodlNFTs.length : 0;
+    const fhodlTotalReward = fhodlCount * fhodlRewardRate;
 
-    // --- RANK LOGIC ---
-    const includedCount = data.includedNFTs ? data.includedNFTs.length : 0;
-    const excludedCount = data.excludedNFTs ? data.excludedNFTs.length : 0;
+    // --- MERGE TOTALS ---
+    const empTotalReward = parseFloat(empData.totalReward) || 0;
+    const grandTotalReward = empTotalReward + fhodlTotalReward;
+
+    totalRewardEl.textContent = grandTotalReward.toLocaleString();
+
+    // --- MERGE RANK (UPDATED: EXCLUDE FHODL COUNT) ---
+    const includedCount = empData.includedNFTs ? empData.includedNFTs.length : 0;
+    const excludedCount = empData.excludedNFTs ? empData.excludedNFTs.length : 0;
+    
+    // Logic Changed Here: Only EMP collection counts for rank
     const totalNFTs = includedCount + excludedCount;
     
     let rankName = 'No Rank';
@@ -403,13 +422,32 @@ calculateBtn.addEventListener('click', async () => {
         walletRankDisplay.className = "metric-value";
     }
 
+    // --- DISPLAY CATEGORIES ---
     categoryTotalsEl.innerHTML = '';
-    for (const [cat, info] of Object.entries(data.categorySums || {})) {
+    
+    // 1. FHODL Category (New)
+    if (fhodlCount > 0) {
+        categoryTotalsEl.innerHTML += `<li><strong>FHODL:</strong> ${fhodlTotalReward} $REWARD from ${fhodlCount} NFT${fhodlCount !== 1 ? 's' : ''}</li>`;
+    }
+
+    // 2. Existing EMP Categories
+    for (const [cat, info] of Object.entries(empData.categorySums || {})) {
       categoryTotalsEl.innerHTML += `<li><strong>${cat}:</strong> ${info.reward} $REWARD from ${info.count} NFT${info.count !== 1 ? 's' : ''}</li>`;
     }
 
     const categoriesMap = {};
-    (data.includedNFTs || []).forEach(nft => {
+    
+    // Add FHODL to map
+    if (fhodlCount > 0) {
+        categoriesMap["FHODL"] = fhodlNFTs.map(nft => ({
+            name: nft.name || nft.identifier,
+            reward: fhodlRewardRate,
+            attributes: []
+        }));
+    }
+
+    // Add EMP to map
+    (empData.includedNFTs || []).forEach(nft => {
       nft.categories.forEach(cat => {
         if (!categoriesMap[cat]) categoriesMap[cat] = [];
         categoriesMap[cat].push(nft);
@@ -418,7 +456,9 @@ calculateBtn.addEventListener('click', async () => {
 
     categoriesContainer.innerHTML = '';
     for (const [category, nfts] of Object.entries(categoriesMap)) {
-      const count = data.categorySums?.[category]?.count || nfts.length;
+      // Logic for count: check backend sums first, fallback to array length (needed for FHODL)
+      const count = empData.categorySums?.[category]?.count || nfts.length;
+      
       const catDetails = document.createElement('details');
       catDetails.className = "collapsible-cat";
       const catSummary = document.createElement('summary');
@@ -454,16 +494,17 @@ calculateBtn.addEventListener('click', async () => {
       categoriesContainer.appendChild(catDetails);
     }
 
-    if (data.excludedNFTs.length === 0) {
-      excludedList.innerHTML = '<li>All NFTs qualified with traits.</li>';
+    if (empData.excludedNFTs.length === 0) {
+      excludedList.innerHTML = '<li>All EMP NFTs qualified with traits.</li>';
     } else {
-      data.excludedNFTs.forEach(nft => {
+      empData.excludedNFTs.forEach(nft => {
         excludedList.innerHTML += `<li><strong>${nft.name}</strong> No qualifying traits found.</li>`;
       });
     }
 
   } catch (e) {
     totalRewardEl.textContent = 'Error';
+    walletRankDisplay.textContent = 'Error';
     console.error(e);
   }
 });
@@ -471,7 +512,7 @@ calculateBtn.addEventListener('click', async () => {
 
 document.getElementById('resyncCollectionBtn').addEventListener('click', async () => {
   try {
-    const res = await fetch(`/api/all-traits/${collectionId}`);
+    const res = await fetch(`/api/all-traits/${empCollectionId}`);
     const categories = await res.json();
     let addedCount = 0;
     for (const category of categories) {
@@ -500,7 +541,7 @@ async function loadMintedCount() {
   async function fetchCount() {
     mintedCountSpan.textContent = 'Loading...';
     try {
-      const res = await fetch('https://api.multiversx.com/nfts/count?collection=EMP-897b49');
+      const res = await fetch(`https://api.multiversx.com/nfts/count?collection=${empCollectionId}`);
       if (!res.ok) {
         mintedCountSpan.textContent = 'N/A';
         return;

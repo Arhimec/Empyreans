@@ -2,22 +2,109 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
   <title>HODL Token Club | NFT Rewards Dashboard</title>
   <link rel="stylesheet" href="style.css" />
   <style>
-    /* RANK BADGE STYLES */
+    /* GLOBAL RESET */
+    * { box-sizing: border-box; }
+
+    /* CORE LAYOUT */
+    body { font-family: Arial, sans-serif; margin: 0; padding-bottom: 60px; }
+    
+    /* INPUTS & BUTTONS */
+    label, input, button { font-size: 1em; }
+    
+    input { 
+      padding: 10px; 
+      width: 100%;
+      max-width: 100%; /* Ensure it never breaks mobile width */
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    button.btn { 
+      padding: 10px 20px; 
+      cursor: pointer; 
+      max-width: 100%;
+    }
+
+    /* GRID SYSTEM (2x3 Layout) */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr); /* 2 columns Desktop */
+      grid-auto-rows: min-content; /* Row height adjusts to content */
+      gap: 30px; /* Increased gap to prevent glow overlap */
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+
+    /* MOBILE ADJUSTMENTS (1 Column) */
+    @media (max-width: 768px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+        padding: 0 15px;
+        gap: 25px; /* Vertical gap for mobile */
+      }
+      
+      .header {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+      }
+    }
+
+    /* CARD UTILITIES - Fixes Overlap */
+    .glow-card, .glow-panel {
+      height: auto !important; /* Force auto height to fit content */
+      min-height: 100%;
+      width: 100%;
+      overflow: hidden; /* Prevent content spilling */
+      padding: 20px;
+      border-radius: 12px;
+      position: relative; /* Ensure stacking context */
+      background: rgba(0,0,0,0.4); /* Fallback background */
+      /* Ensure external CSS doesn't force absolute positioning */
+      top: auto; 
+      left: auto;
+    }
+
+    /* METRIC CARDS (Top Row) */
+    .metric-card {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 120px; /* Min height for visual balance */
+    }
+    
+    .metric-title {
+      font-size: 0.9em;
+      text-transform: uppercase;
+      opacity: 0.8;
+      margin-bottom: 10px;
+      letter-spacing: 1px;
+    }
+    
+    .metric-value {
+      font-size: 1.8em;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    /* RANK BADGES */
     .rank-badge {
       display: inline-block;
-      font-size: 0.5em; /* Scaled relative to the h2 */
-      padding: 5px 12px;
-      border-radius: 12px;
-      margin-left: 12px;
-      vertical-align: middle;
+      font-size: 0.8em;
+      padding: 8px 16px;
+      border-radius: 20px;
       color: #fff;
       font-weight: 700;
       text-transform: uppercase;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
       letter-spacing: 0.5px;
     }
 
@@ -28,6 +115,8 @@
     .rank-crab { background: linear-gradient(135deg, #c0392b, #e74c3c); border: 1px solid #f5b7b1; }
     .rank-fish { background: linear-gradient(135deg, #d35400, #e67e22); border: 1px solid #fad7a0; }
     .rank-plankton { background: linear-gradient(135deg, #27ae60, #2ecc71); border: 1px solid #abebc6; }
+    
+    .rank-none { color: #aaa; font-size: 1.2em; font-weight: bold; }
   </style>
 </head>
 <body>
@@ -45,79 +134,95 @@
   </div>
 </header>
 
-<div class="glow-card" id="publicCalculator">
-  <h1>Calculate Wallet NFT Rewards</h1>
-  <form class="input-row" onsubmit="return false;">
-    <label for="walletInput">Wallet Address</label>
-    <input type="text" id="walletInput" placeholder="erd1..." autocomplete="off" />
-  </form>
-  <button class="btn" id="calculateBtn">Calculate Rewards</button>
-</div>
-
-<div class="glow-card" id="publicCalculator">
-<h1>Traits Distribution</h1>
-<a href="http://203.161.43.175:3012/stats.html" target="_blank" rel="noopener" class="btn">Open Trait Distribution</a>
-  <div class="minted">
-    <strong>Minted by now:</strong> <span id="mintedCount">Loading...</span>
+<div class="dashboard-grid">
+  
+  <div class="glow-card metric-card">
+    <div class="metric-title">Minted by now</div>
+    <div class="metric-value" id="mintedCount">Loading...</div>
   </div>
-</div>
 
-<div class="main-panels">
+  <div class="glow-card metric-card">
+    <div class="metric-title">Wallet Rank</div>
+    <div class="metric-value" id="walletRankDisplay" style="font-size: 1.2em;">—</div>
+  </div>
+
+  <div class="glow-card" id="publicCalculator">
+    <h1>Calculate Wallet NFT Rewards</h1>
+    <form class="input-row" onsubmit="return false;">
+      <label for="walletInput" style="display:block; margin-bottom:5px;">Wallet Address</label>
+      <input type="text" id="walletInput" placeholder="erd1..." autocomplete="off" />
+    </form>
+    <button class="btn" id="calculateBtn">Calculate Rewards</button>
+  </div>
+
+  <div class="glow-card" id="traitsSection" style="display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 200px;">
+    <h1 style="margin-top:0;">Traits Distribution</h1>
+    <a href="http://203.161.43.175:3012/stats.html" target="_blank" rel="noopener" class="btn" style="display:block; width:100%; text-align:center;">Open Trait Distribution</a>
+  </div>
+
   <div class="glow-panel">
-    <h2>Total Weekly Reward: <span id="totalReward">—</span> <span id="walletRank"></span></h2>
+    <h2>Total Weekly Reward: <span id="totalReward">—</span></h2>
     <div>
-      <div style="font-weight:500;">Category Reward Totals:</div>
-      <ul class="category-totals" id="categoryTotals"></ul>
+      <div style="font-weight:500; margin-bottom:10px;">Category Reward Totals:</div>
+      <ul class="category-totals" id="categoryTotals" style="padding-left: 20px; margin-bottom: 20px;"></ul>
     </div>
-    <button class="btn" id="showManageBtn" style="margin-top: 16px;">Manage Rewards</button>
+    <button class="btn" id="showManageBtn">Manage Rewards</button>
   </div>
-  <div class="glow-panel" style="min-width:320px;">
-    <div class="debug-info">Detailed Info</div>
+
+  <div class="glow-panel" style="min-width: unset;">
+    <div class="debug-info" style="margin-bottom:15px;">Detailed Info</div>
     <div id="categoriesContainer"></div>
-    <div id="excludedNFTsSection" style="margin-top:16px;">
-      <div style="font-size:1em;font-weight:600;">NFTs Excluded</div>
-      <ul id="excludedNFTsList"></ul>
+    <div id="excludedNFTsSection" style="margin-top:20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top:10px;">
+      <div style="font-size:1em;font-weight:600; margin-bottom:5px;">NFTs Excluded</div>
+      <ul id="excludedNFTsList" style="padding-left: 20px;"></ul>
     </div>
   </div>
+
 </div>
 
-<div id="passwordSection" style="display:none; margin-top: 20px; max-width:900px; margin-left:auto; margin-right:auto;">
-  <label for="passwordInput" style="font-weight: 700; font-size: 1.03em; color: #AEEFFF;">Enter Admin Password to Manage Rewards:</label>
-  <input type="password" id="passwordInput" placeholder="Enter password" autocomplete="off" style="background:#080f12; border:2px solid #10a8c2; color:#AEF7FE; font-size:1em; padding:8px 12px; width:350px; border-radius:8px; outline:none; margin-right: 12px;" />
-  <button class="btn" id="passwordBtn" style="margin-right: 8px;">Submit</button>
-  <button class="btn" id="cancelPasswordBtn" style="background:#ff5555; color:#14161a; box-shadow:none;">Cancel</button>
+<div id="passwordSection" style="display:none; margin: 20px auto; max-width:900px; padding: 0 10px;">
+  <label for="passwordInput" style="font-weight: 700; font-size: 1.03em; color: #AEEFFF; display:block; margin-bottom:5px;">Enter Admin Password:</label>
+  <input type="password" id="passwordInput" placeholder="Enter password" autocomplete="off" style="background:#080f12; border:2px solid #10a8c2; color:#AEF7FE;" />
+  <div style="margin-top:5px;">
+    <button class="btn" id="passwordBtn" style="margin-right: 8px;">Submit</button>
+    <button class="btn" id="cancelPasswordBtn" style="background:#ff5555; color:#14161a; box-shadow:none;">Cancel</button>
+  </div>
   <div class="error" id="passwordError" style="margin-top: 8px;"></div>
 </div>
 
-<div id="rewardsManagement" style="display:none; max-width:900px; margin-left:auto; margin-right:auto; margin-top: 32px;">
+<div id="rewardsManagement" style="display:none; max-width:900px; margin: 32px auto; padding: 0 10px;">
   <button id="logoutBtn" class="btn" style="float: right; margin-bottom: 12px; background: #ff6666; color: #14161a; box-shadow:none;">Logout</button>
   <h2>Category-based Trait Rewards</h2>
 
   <h3>Add/Update Reward</h3>
-  <form id="addRewardForm" style="display:flex; gap: 12px; flex-wrap: wrap; align-items:center;">
-    <label style="flex-shrink:0;">Category (prefix before '_Head'):</label>
-    <input type="text" id="newCategory" required autocomplete="off" style="flex-grow:1; max-width: 280px; padding:6px 10px; border-radius: 8px; border: 2px solid #10a8c2; background: #080f12; color:#AEF7FE; font-size:1em; outline:none;" />
-    
-    <label style="flex-shrink:0;">Reward $REWARD:</label>
-    <input type="number" id="newReward" required min="0" style="flex-grow:1; max-width: 110px; padding:6px 12px; border-radius: 8px; border: 2px solid #10a8c2; background: #080f12; color:#AEF7FE; font-size:1em; outline:none;" />
-    
-    <button type="submit" class="btn" style="flex-shrink:0; margin-left: auto;">Save Reward</button>
+  <form id="addRewardForm" style="display:flex; gap: 10px; flex-wrap: wrap; align-items:center;">
+    <div style="flex: 1 1 200px;">
+      <label>Category:</label>
+      <input type="text" id="newCategory" required autocomplete="off" style="background: #080f12; color:#AEF7FE; border: 2px solid #10a8c2;" />
+    </div>
+    <div style="flex: 1 1 100px;">
+      <label>Reward:</label>
+      <input type="number" id="newReward" required min="0" style="background: #080f12; color:#AEF7FE; border: 2px solid #10a8c2;" />
+    </div>
+    <button type="submit" class="btn" style="flex: 1 1 100%;">Save Reward</button>
   </form>
   <div class="error" id="formError" style="margin-top: 6px; color:#ff6666;"></div>
 
   <h3 style="margin-top: 28px;">Existing Rewards</h3>
-  <table id="rewardsTable" aria-label="Category rewards table" style="width:100%; border-collapse: collapse;">
-    <thead>
-      <tr style="border-bottom: 1px solid #10a8c2;">
-        <th style="text-align:left; padding: 10px;">Category</th>
-        <th style="text-align:right; padding: 10px;">Reward $REWARD</th>
-        <th style="text-align:center; padding: 10px;">Actions</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+  <div style="overflow-x:auto;">
+    <table id="rewardsTable" aria-label="Category rewards table" style="width:100%; border-collapse: collapse; min-width: 300px;">
+      <thead>
+        <tr style="border-bottom: 1px solid #10a8c2;">
+          <th style="text-align:left; padding: 10px;">Category</th>
+          <th style="text-align:right; padding: 10px;">Reward</th>
+          <th style="text-align:center; padding: 10px;">Actions</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
 
-  <h2 style="margin-top: 36px;">Resync Categories from Collection</h2>
+  <h2 style="margin-top: 36px;">Resync Categories</h2>
   <button id="resyncCollectionBtn" class="btn">Resync Categories</button>
 </div>
 
@@ -125,6 +230,7 @@
 const collectionId = "EMP-897b49";
 
 const mintedCountSpan = document.getElementById('mintedCount');
+const walletRankDisplay = document.getElementById('walletRankDisplay');
 const calculateBtn = document.getElementById('calculateBtn');
 const walletInput = document.getElementById('walletInput');
 const showManageBtn = document.getElementById('showManageBtn');
@@ -137,7 +243,6 @@ const rewardsDiv = document.getElementById('rewardsManagement');
 const logoutBtn = document.getElementById('logoutBtn');
 
 const totalRewardEl = document.getElementById('totalReward');
-const walletRankEl = document.getElementById('walletRank'); // NEW ELEMENT
 const categoryTotalsEl = document.getElementById('categoryTotals');
 const categoriesContainer = document.getElementById('categoriesContainer');
 const excludedList = document.getElementById('excludedNFTsList');
@@ -176,8 +281,8 @@ logoutBtn.addEventListener('click', () => {
   passwordSection.style.display = 'none';
   showManageBtn.style.display = 'inline-block';
   totalRewardEl.textContent = '—';
-  walletRankEl.innerHTML = '';
-  walletRankEl.className = '';
+  walletRankDisplay.innerHTML = '—';
+  walletRankDisplay.className = 'metric-value';
   categoryTotalsEl.innerHTML = '';
   categoriesContainer.innerHTML = '';
   excludedList.innerHTML = '';
@@ -237,8 +342,6 @@ addRewardForm.addEventListener('submit', async e => {
     formError.textContent = 'Fill all fields correctly.';
     return;
   }
-  // Check if category already exists in table visually is weak check, but okay for now
-  // A better way is checking the current config object
   await fetch('/api/config', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -251,15 +354,15 @@ addRewardForm.addEventListener('submit', async e => {
 calculateBtn.addEventListener('click', async () => {
   const wallet = walletInput.value.trim();
   totalRewardEl.textContent = '—';
-  walletRankEl.innerHTML = ''; // Reset rank
-  walletRankEl.className = '';
-  
+  walletRankDisplay.innerHTML = 'Loading...';
+  walletRankDisplay.className = 'metric-value';
   categoryTotalsEl.innerHTML = '';
   categoriesContainer.innerHTML = '';
   excludedList.innerHTML = '';
   
   if (!wallet) {
     alert('Please enter a wallet address');
+    walletRankDisplay.innerHTML = '—';
     return;
   }
   totalRewardEl.textContent = 'Loading...';
@@ -270,18 +373,19 @@ calculateBtn.addEventListener('click', async () => {
 
     if (!res.ok || !data) {
       totalRewardEl.textContent = 'Error';
+      walletRankDisplay.innerHTML = 'Error';
       return;
     }
 
     totalRewardEl.textContent = data.totalReward;
 
-    // --- NEW: CALCULATE WALLET RANK ---
+    // --- RANK LOGIC ---
     const includedCount = data.includedNFTs ? data.includedNFTs.length : 0;
     const excludedCount = data.excludedNFTs ? data.excludedNFTs.length : 0;
     const totalNFTs = includedCount + excludedCount;
     
-    let rankName = '';
-    let rankClass = '';
+    let rankName = 'No Rank';
+    let rankClass = 'rank-none';
 
     if (totalNFTs >= 500) { rankName = 'Mega Whale'; rankClass = 'rank-mega-whale'; }
     else if (totalNFTs >= 250) { rankName = 'Whale'; rankClass = 'rank-whale'; }
@@ -291,18 +395,19 @@ calculateBtn.addEventListener('click', async () => {
     else if (totalNFTs >= 10) { rankName = 'Fish'; rankClass = 'rank-fish'; }
     else if (totalNFTs >= 1) { rankName = 'Plankton'; rankClass = 'rank-plankton'; }
     
-    if (rankName) {
-        walletRankEl.textContent = `${rankName} (${totalNFTs} NFTs)`;
-        walletRankEl.className = `rank-badge ${rankClass}`;
+    walletRankDisplay.textContent = rankName;
+    if (totalNFTs >= 1) {
+        walletRankDisplay.className = `rank-badge ${rankClass}`;
+    } else {
+        walletRankDisplay.textContent = "No NFTs";
+        walletRankDisplay.className = "metric-value";
     }
-    // ----------------------------------
 
     categoryTotalsEl.innerHTML = '';
     for (const [cat, info] of Object.entries(data.categorySums || {})) {
       categoryTotalsEl.innerHTML += `<li><strong>${cat}:</strong> ${info.reward} $REWARD from ${info.count} NFT${info.count !== 1 ? 's' : ''}</li>`;
     }
 
-    // Group NFTs into categories
     const categoriesMap = {};
     (data.includedNFTs || []).forEach(nft => {
       nft.categories.forEach(cat => {
@@ -413,7 +518,7 @@ async function loadMintedCount() {
   }
   
   await fetchCount();
-  setInterval(fetchCount, 30000); // Refresh every 30 seconds
+  setInterval(fetchCount, 30000); 
 }
 </script>
 </body>

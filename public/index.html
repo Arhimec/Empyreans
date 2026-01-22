@@ -12,102 +12,146 @@
     /* CORE LAYOUT */
     body { font-family: Arial, sans-serif; margin: 0; padding-bottom: 60px; }
     
-    /* INPUTS & BUTTONS */
-    label, input, button { font-size: 1em; }
+    /* INPUTS */
+    label, input { font-size: 1em; }
     
-    input { 
-      padding: 10px; 
+    .input-row {
+      display: flex;
+      flex-direction: column;
       width: 100%;
-      max-width: 100%; 
-      margin-bottom: 10px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
+      margin-bottom: 15px;
     }
 
-    button.btn { 
-      padding: 10px 20px; 
-      cursor: pointer; 
-      max-width: 100%;
+    input { 
+      padding: 12px; 
+      width: 100%;
+      max-width: 100%; 
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin-top: 5px; 
+      background: rgba(0,0,0,0.2); 
+      color: #fff; 
     }
+
+    /* UNIFIED BUTTON STYLES */
+    .btn { 
+      display: inline-block;
+      width: 100%;
+      padding: 12px 20px; 
+      border-radius: 6px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      cursor: pointer; 
+      text-align: center;
+      text-decoration: none;
+      font-size: 1em;
+      border: 1px solid transparent; 
+      font-family: Arial, sans-serif; 
+      background: #00ffc3; 
+      color: #14161a; 
+      transition: opacity 0.2s;
+    }
+    
+    .btn:hover { opacity: 0.9; }
 
     /* GRID SYSTEM */
     .dashboard-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       grid-auto-rows: min-content;
-      gap: 30px;
+      gap: 30px; 
       max-width: 1200px;
       margin: 30px auto;
       padding: 0 20px;
     }
 
-    /* MOBILE ADJUSTMENTS */
-    @media (max-width: 768px) {
-      .dashboard-grid {
-        grid-template-columns: 1fr;
-        padding: 0 15px;
-        gap: 25px;
-      }
-      .header {
-        flex-direction: column;
-        text-align: center;
-        gap: 15px;
-      }
+    /* SPAN UTILITIES */
+    .col-span-1 { grid-column: span 1; }
+    .col-span-2 { grid-column: span 2; }
+    .col-span-3 { grid-column: span 3; } 
+    .col-span-4 { grid-column: span 4; }
+
+    /* RESPONSIVE */
+    @media (max-width: 1024px) {
+      .dashboard-grid { grid-template-columns: repeat(2, 1fr); }
+      .col-span-1 { grid-column: span 1; }
+      .col-span-2 { grid-column: span 2; }
+      .col-span-3 { grid-column: span 2; } 
+      .col-span-4 { grid-column: span 2; }
     }
 
-    /* CARD UTILITIES */
+    @media (max-width: 768px) {
+      .dashboard-grid { grid-template-columns: 1fr; gap: 20px; }
+      .col-span-1, .col-span-2, .col-span-3, .col-span-4 { grid-column: span 1; }
+      .header { flex-direction: column; text-align: center; gap: 15px; }
+    }
+
+    /* CARD STYLES */
     .glow-card, .glow-panel {
-      height: auto !important;
-      min-height: 100%;
+      height: 100%;
       width: 100%;
       overflow: hidden;
-      padding: 20px;
-      border-radius: 12px;
+      padding: 25px;
+      border-radius: 16px;
       position: relative;
       background: rgba(0,0,0,0.4);
-      top: auto; 
-      left: auto;
+      display: flex;
+      flex-direction: column;
     }
+
+    /* SCROLLBARS */
+    .scrollable-content {
+        max-height: 300px;
+        overflow-y: auto;
+        padding-right: 5px;
+        margin-top: 10px;
+    }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+    ::-webkit-scrollbar-thumb { background: rgba(0,255,195,0.3); border-radius: 3px; }
 
     /* METRIC CARDS */
     .metric-card {
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
+      justify-content: flex-start; 
       align-items: center;
-      min-height: 120px;
+      text-align: center;
+      min-height: 140px; 
+      padding-top: 25px; 
     }
     
     .metric-title {
-      font-size: 0.9em;
+      font-size: 0.8em;
       text-transform: uppercase;
-      opacity: 0.8;
-      margin-bottom: 10px;
+      opacity: 0.7;
+      margin-bottom: 10px; 
       letter-spacing: 1px;
+      font-weight: 600;
     }
     
     .metric-value {
-      font-size: 1.8em;
+      font-size: 1.6em;
       font-weight: 700;
       line-height: 1.2;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      flex-grow: 1; 
     }
 
     /* RANK BADGES */
     .rank-badge {
       display: inline-block;
-      font-size: 0.6em;
-      padding: 8px 16px;
+      font-size: 0.5em; 
+      padding: 6px 14px;
       border-radius: 20px;
       color: #fff;
       font-weight: 700;
       text-transform: uppercase;
       box-shadow: 0 4px 10px rgba(0,0,0,0.3);
       letter-spacing: 0.5px;
+      margin-bottom: 5px;
     }
 
     .rank-mega-whale { background: linear-gradient(135deg, #8e44ad, #f1c40f); border: 1px solid #f1c40f; }
@@ -117,7 +161,6 @@
     .rank-crab { background: linear-gradient(135deg, #c0392b, #e74c3c); border: 1px solid #f5b7b1; }
     .rank-fish { background: linear-gradient(135deg, #d35400, #e67e22); border: 1px solid #fad7a0; }
     .rank-plankton { background: linear-gradient(135deg, #27ae60, #2ecc71); border: 1px solid #abebc6; }
-    
     .rank-none { color: #aaa; font-size: 1.2em; font-weight: bold; }
   </style>
 </head>
@@ -138,45 +181,60 @@
 
 <div class="dashboard-grid">
   
-  <div class="glow-card metric-card">
-    <div class="metric-title">Minted by now (EMP)</div>
-    <div class="metric-value" id="mintedCount">Loading...</div>
+  <div class="glow-card metric-card col-span-1">
+    <div class="metric-title">Minted (EMP)</div>
+    <div id="mintedCount" class="btn" style="cursor: default;">Loading...</div>
   </div>
 
-  <div class="glow-card metric-card">
-    <div class="metric-title">Wallet Rank</div>
-    <div class="metric-value" id="walletRankDisplay" style="font-size: 1.5em;">—</div>
+  <div class="glow-card metric-card col-span-1">
+    <div class="metric-title">Stats</div>
+    <a href="http://203.161.43.175:3012/stats.html" target="_blank" rel="noopener" class="btn">View Traits</a>
   </div>
 
-  <div class="glow-card" id="publicCalculator">
-    <h1>Calculate Wallet NFT Rewards</h1>
+  <div class="glow-card metric-card col-span-1">
+    <div class="metric-title">Admin</div>
+    <button class="btn" id="showManageBtn">Manage</button>
+  </div>
+
+  <div class="glow-card metric-card col-span-1">
+    <div class="metric-title">Mint Party</div>
+    <a href="https://xoxno.com/collection/EMP-897b49/drops" target="_blank" rel="noopener" class="btn">Go to Mint</a>
+  </div>
+
+
+  <div class="glow-card col-span-3" id="publicCalculator">
+    <h1 style="margin-top:0; font-size: 1.5em; text-align: left;">Calculate Rewards</h1>
     <form class="input-row" onsubmit="return false;">
-      <label for="walletInput" style="display:block; margin-bottom:5px;">Wallet Address or Herotag</label>
-      <input type="text" id="walletInput" placeholder="erd1... or @herotag" autocomplete="off" />
+      <label for="walletInput" style="display:block; opacity: 0.8;">Wallet Address or Herotag</label>
+      <input type="text" id="walletInput" placeholder="e.g. @herotag or erd1..." autocomplete="off" />
     </form>
-    <button class="btn" id="calculateBtn">Calculate Rewards</button>
+    <button class="btn" id="calculateBtn">Calculate</button>
   </div>
 
-  <div class="glow-card" id="traitsSection" style="display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 200px;">
-    <h1 style="margin-top:0;">Traits Distribution</h1>
-    <a href="http://203.161.43.175:3012/stats.html" target="_blank" rel="noopener" class="btn" style="display:block; width:100%; text-align:center;">Open Trait Distribution</a>
+  <div class="glow-card metric-card col-span-1">
+    <div class="metric-title">Wallet Rank</div>
+    <div class="metric-value" id="walletRankDisplay" style="font-size: 1.2em;">—</div>
   </div>
 
-  <div class="glow-panel">
-    <h2>Total Weekly Reward: <span id="totalReward">—</span></h2>
-    <div>
-      <div style="font-weight:500; margin-bottom:10px;">Category Reward Totals:</div>
-      <ul class="category-totals" id="categoryTotals" style="padding-left: 20px; margin-bottom: 20px;"></ul>
+
+  <div class="glow-panel col-span-2" style="margin-top: 40px;">
+    <h2 style="margin-top: 0;">Total Weekly Reward: <span id="totalReward" style="color: #00ffc3;">—</span></h2>
+    <div class="scrollable-content" style="flex-grow: 1;">
+      <div style="font-weight:500; margin-bottom:10px; opacity: 0.8;">Category Breakdown:</div>
+      <ul class="category-totals" id="categoryTotals" style="padding-left: 20px; margin-bottom: 0;"></ul>
     </div>
-    <button class="btn" id="showManageBtn">Manage Rewards</button>
   </div>
 
-  <div class="glow-panel" style="min-width: unset;">
-    <div class="debug-info" style="margin-bottom:15px;">Detailed Info</div>
-    <div id="categoriesContainer"></div>
-    <div id="excludedNFTsSection" style="margin-top:20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top:10px;">
-      <div style="font-size:1em;font-weight:600; margin-bottom:5px;">NFTs Excluded</div>
-      <ul id="excludedNFTsList" style="padding-left: 20px;"></ul>
+  <div class="glow-panel col-span-2" style="margin-top: 40px;">
+    <div class="debug-info" style="margin-bottom:10px; font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">Detailed Info</div>
+    
+    <div class="scrollable-content">
+      <div id="categoriesContainer"></div>
+      
+      <div id="excludedNFTsSection" style="margin-top:20px; padding-top:10px; border-top: 1px dashed rgba(255,255,255,0.1);">
+        <div style="font-size:0.9em; font-weight:600; margin-bottom:5px; opacity: 0.7;">NFTs Excluded</div>
+        <ul id="excludedNFTsList" style="padding-left: 20px; margin: 0;"></ul>
+      </div>
     </div>
   </div>
 
@@ -186,17 +244,15 @@
   <label for="passwordInput" style="font-weight: 700; font-size: 1.03em; color: #AEEFFF; display:block; margin-bottom:5px;">Enter Admin Password:</label>
   <input type="password" id="passwordInput" placeholder="Enter password" autocomplete="off" style="background:#080f12; border:2px solid #10a8c2; color:#AEF7FE;" />
   <div style="margin-top:5px;">
-    <button class="btn" id="passwordBtn" style="margin-right: 8px;">Submit</button>
-    <button class="btn" id="cancelPasswordBtn" style="background:#ff5555; color:#14161a; box-shadow:none;">Cancel</button>
+    <button class="btn" id="passwordBtn" style="margin-right: 8px; width: auto;">Submit</button>
+    <button class="btn" id="cancelPasswordBtn" style="background:#ff5555; color:#14161a; box-shadow:none; width: auto;">Cancel</button>
   </div>
   <div class="error" id="passwordError" style="margin-top: 8px;"></div>
 </div>
 
 <div id="rewardsManagement" style="display:none; max-width:900px; margin: 32px auto; padding: 0 10px;">
-  <button id="logoutBtn" class="btn" style="float: right; margin-bottom: 12px; background: #ff6666; color: #14161a; box-shadow:none;">Logout</button>
-  <h2>Category-based Trait Rewards</h2>
-
-  <h3>Add/Update Reward</h3>
+  <button id="logoutBtn" class="btn" style="float: right; margin-bottom: 12px; background: #ff6666; color: #14161a; box-shadow:none; width: auto;">Logout</button>
+  <h2>Manage Rewards</h2>
   <form id="addRewardForm" style="display:flex; gap: 10px; flex-wrap: wrap; align-items:center;">
     <div style="flex: 1 1 200px;">
       <label>Category:</label>
@@ -206,12 +262,10 @@
       <label>Reward:</label>
       <input type="number" id="newReward" required min="0" style="background: #080f12; color:#AEF7FE; border: 2px solid #10a8c2;" />
     </div>
-    <button type="submit" class="btn" style="flex: 1 1 100%;">Save Reward</button>
+    <button type="submit" class="btn" style="flex: 1 1 100%;">Save</button>
   </form>
   <div class="error" id="formError" style="margin-top: 6px; color:#ff6666;"></div>
-
-  <h3 style="margin-top: 28px;">Existing Rewards</h3>
-  <div style="overflow-x:auto;">
+  <div style="overflow-x:auto; margin-top: 20px;">
     <table id="rewardsTable" aria-label="Category rewards table" style="width:100%; border-collapse: collapse; min-width: 300px;">
       <thead>
         <tr style="border-bottom: 1px solid #10a8c2;">
@@ -223,7 +277,6 @@
       <tbody></tbody>
     </table>
   </div>
-
   <h2 style="margin-top: 36px;">Resync Categories</h2>
   <button id="resyncCollectionBtn" class="btn">Resync Categories</button>
 </div>
@@ -233,6 +286,7 @@ const empCollectionId = "EMP-897b49";
 const fhodlCollectionId = "FHODL-a9ad67";
 const fhodlRewardRate = 1400;
 
+// Elements
 const mintedCountSpan = document.getElementById('mintedCount');
 const walletRankDisplay = document.getElementById('walletRankDisplay');
 const calculateBtn = document.getElementById('calculateBtn');
@@ -245,7 +299,6 @@ const cancelPasswordBtn = document.getElementById('cancelPasswordBtn');
 const passwordError = document.getElementById('passwordError');
 const rewardsDiv = document.getElementById('rewardsManagement');
 const logoutBtn = document.getElementById('logoutBtn');
-
 const totalRewardEl = document.getElementById('totalReward');
 const categoryTotalsEl = document.getElementById('categoryTotals');
 const categoriesContainer = document.getElementById('categoriesContainer');
@@ -254,15 +307,15 @@ const rewardsTableBody = document.querySelector('#rewardsTable tbody');
 const formError = document.getElementById('formError');
 const addRewardForm = document.getElementById('addRewardForm');
 
+// --- ADMIN UI HANDLERS ---
 showManageBtn.addEventListener('click', () => {
-  showManageBtn.style.display = 'none';
+  document.querySelector('.dashboard-grid').style.display = 'none';
   passwordSection.style.display = 'block';
   passwordInput.focus();
 });
 
 passwordBtn.addEventListener('click', () => {
-  const pw = passwordInput.value.trim();
-  if (pw === 'nothing') {
+  if (passwordInput.value.trim() === 'nothing') {
     passwordError.textContent = '';
     passwordSection.style.display = 'none';
     passwordInput.value = '';
@@ -277,13 +330,13 @@ cancelPasswordBtn.addEventListener('click', () => {
   passwordSection.style.display = 'none';
   passwordError.textContent = '';
   passwordInput.value = '';
-  showManageBtn.style.display = 'inline-block';
+  document.querySelector('.dashboard-grid').style.display = 'grid';
 });
 
 logoutBtn.addEventListener('click', () => {
   rewardsDiv.style.display = 'none';
   passwordSection.style.display = 'none';
-  showManageBtn.style.display = 'inline-block';
+  document.querySelector('.dashboard-grid').style.display = 'grid';
   totalRewardEl.textContent = '—';
   walletRankDisplay.innerHTML = '—';
   walletRankDisplay.className = 'metric-value';
@@ -293,6 +346,7 @@ logoutBtn.addEventListener('click', () => {
   walletInput.value = '';
 });
 
+// --- API & DATA HANDLERS ---
 async function loadConfig() {
   formError.textContent = '';
   const res = await fetch('/api/config');
@@ -319,12 +373,10 @@ function renderTable(traitRewards) {
 }
 
 async function updateReward(category, reward) {
-  reward = parseInt(reward);
-  if (isNaN(reward)) return;
   await fetch('/api/config', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ category, reward }),
+    body: JSON.stringify({ category, reward: parseInt(reward) }),
   });
   await loadConfig();
 }
@@ -342,10 +394,6 @@ addRewardForm.addEventListener('submit', async e => {
   e.preventDefault();
   const category = document.getElementById('newCategory').value.trim();
   const reward = parseInt(document.getElementById('newReward').value);
-  if (!category || isNaN(reward) || reward < 0) {
-    formError.textContent = 'Fill all fields correctly.';
-    return;
-  }
   await fetch('/api/config', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -355,21 +403,11 @@ addRewardForm.addEventListener('submit', async e => {
   await loadConfig();
 });
 
-// --- NEW HELPER: Resolve Address ---
+// --- HELPER: Resolve Herotag ---
 async function resolveAddress(input) {
   let cleanInput = input.trim();
-  
-  // If it starts with 'erd1' and seems like a valid length, assume address
-  if (cleanInput.startsWith('erd1') && cleanInput.length === 62) {
-    return cleanInput;
-  }
-  
-  // Otherwise assume Herotag
-  // Remove '@' if present
-  if (cleanInput.startsWith('@')) {
-    cleanInput = cleanInput.substring(1);
-  }
-  
+  if (cleanInput.startsWith('erd1') && cleanInput.length === 62) return cleanInput;
+  if (cleanInput.startsWith('@')) cleanInput = cleanInput.substring(1);
   try {
     const res = await fetch(`https://api.multiversx.com/usernames/${cleanInput}`);
     if (!res.ok) throw new Error('Herotag not found');
@@ -380,12 +418,12 @@ async function resolveAddress(input) {
   }
 }
 
+// --- MAIN CALCULATION LOGIC ---
 calculateBtn.addEventListener('click', async () => {
   const rawInput = walletInput.value.trim();
   totalRewardEl.textContent = '—';
-  
   walletRankDisplay.innerHTML = 'Loading...';
-  
+  walletRankDisplay.className = 'metric-value';
   categoryTotalsEl.innerHTML = '';
   categoriesContainer.innerHTML = '';
   excludedList.innerHTML = '';
@@ -399,15 +437,9 @@ calculateBtn.addEventListener('click', async () => {
   totalRewardEl.textContent = 'Loading...';
 
   try {
-    // 1. Resolve Herotag to Address
     const wallet = await resolveAddress(rawInput);
-    // Update input to show resolved address (optional, good UX)
-    // walletInput.value = wallet;
 
-    // 2. Fetch EMP Data
     const empPromise = fetch(`/api/rewards/${wallet}/${empCollectionId}`);
-    
-    // 3. Fetch FHODL Data
     const fhodlPromise = fetch(`https://api.multiversx.com/accounts/${wallet}/nfts?collection=${fhodlCollectionId}&size=2000`);
 
     const [empRes, fhodlRes] = await Promise.all([empPromise, fhodlPromise]);
@@ -431,21 +463,46 @@ calculateBtn.addEventListener('click', async () => {
     
     let rankName = 'No Rank';
     let rankClass = 'rank-none';
+    let rankEmoji = '';
 
-    if (totalEmpNFTs >= 500) { rankName = 'Mega Whale'; rankClass = 'rank-mega-whale'; }
-    else if (totalEmpNFTs >= 250) { rankName = 'Whale'; rankClass = 'rank-whale'; }
-    else if (totalEmpNFTs >= 100) { rankName = 'Shark'; rankClass = 'rank-shark'; }
-    else if (totalEmpNFTs >= 50) { rankName = 'Dolphin'; rankClass = 'rank-dolphin'; }
-    else if (totalEmpNFTs >= 25) { rankName = 'Crab'; rankClass = 'rank-crab'; }
-    else if (totalEmpNFTs >= 10) { rankName = 'Fish'; rankClass = 'rank-fish'; }
-    else if (totalEmpNFTs >= 1) { rankName = 'Plankton'; rankClass = 'rank-plankton'; }
+    if (totalEmpNFTs >= 500) { 
+        rankName = 'Mega Whale'; 
+        rankClass = 'rank-mega-whale'; 
+        rankEmoji = '🐋';
+    } else if (totalEmpNFTs >= 250) { 
+        rankName = 'Whale'; 
+        rankClass = 'rank-whale'; 
+        rankEmoji = '🐳';
+    } else if (totalEmpNFTs >= 100) { 
+        rankName = 'Shark'; 
+        rankClass = 'rank-shark'; 
+        rankEmoji = '🦈';
+    } else if (totalEmpNFTs >= 50) { 
+        rankName = 'Dolphin'; 
+        rankClass = 'rank-dolphin'; 
+        rankEmoji = '🐬';
+    } else if (totalEmpNFTs >= 25) { 
+        rankName = 'Crab'; 
+        rankClass = 'rank-crab'; 
+        rankEmoji = '🦀';
+    } else if (totalEmpNFTs >= 10) { 
+        rankName = 'Fish'; 
+        rankClass = 'rank-fish'; 
+        rankEmoji = '🐠';
+    } else if (totalEmpNFTs >= 1) { 
+        rankName = 'Plankton'; 
+        rankClass = 'rank-plankton'; 
+        rankEmoji = '🦠';
+    }
     
     walletRankDisplay.innerHTML = ''; 
     if (totalEmpNFTs >= 1) {
+        // A. Badge (Text)
         const badge = document.createElement('span');
         badge.className = `rank-badge ${rankClass}`;
         badge.textContent = rankName;
         
+        // B. Count Label
         const countLabel = document.createElement('div');
         countLabel.style.fontSize = '0.5em';
         countLabel.style.marginTop = '8px';
@@ -453,8 +510,16 @@ calculateBtn.addEventListener('click', async () => {
         countLabel.style.opacity = '0.8';
         countLabel.textContent = `${totalEmpNFTs} EMP NFTs`;
 
+        // C. Emoji (Large Icon at Bottom)
+        const emojiLabel = document.createElement('div');
+        emojiLabel.style.fontSize = '1.5em';
+        emojiLabel.style.marginTop = '4px';
+        emojiLabel.textContent = rankEmoji;
+
+        // Append in Order
         walletRankDisplay.appendChild(badge);
         walletRankDisplay.appendChild(countLabel);
+        walletRankDisplay.appendChild(emojiLabel);
     } else {
         walletRankDisplay.textContent = "No EMP NFTs";
         walletRankDisplay.className = "metric-value";
@@ -535,12 +600,11 @@ calculateBtn.addEventListener('click', async () => {
   } catch (e) {
     totalRewardEl.textContent = 'Error';
     walletRankDisplay.textContent = 'Error';
-    alert(e.message); // Show error to user (e.g., Herotag not found)
+    alert(e.message);
     console.error(e);
   }
 });
 
-// ... Resync and Load logic ...
 document.getElementById('resyncCollectionBtn').addEventListener('click', async () => {
   try {
     const res = await fetch(`/api/all-traits/${empCollectionId}`);

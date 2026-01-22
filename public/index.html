@@ -91,7 +91,6 @@
       font-size: 1.8em;
       font-weight: 700;
       line-height: 1.2;
-      /* Allow flex column for rank + count */
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -101,7 +100,7 @@
     /* RANK BADGES */
     .rank-badge {
       display: inline-block;
-      font-size: 0.6em; /* Adjusted for container scaling */
+      font-size: 0.6em;
       padding: 8px 16px;
       border-radius: 20px;
       color: #fff;
@@ -152,8 +151,8 @@
   <div class="glow-card" id="publicCalculator">
     <h1>Calculate Wallet NFT Rewards</h1>
     <form class="input-row" onsubmit="return false;">
-      <label for="walletInput" style="display:block; margin-bottom:5px;">Wallet Address</label>
-      <input type="text" id="walletInput" placeholder="erd1..." autocomplete="off" />
+      <label for="walletInput" style="display:block; margin-bottom:5px;">Wallet Address or Herotag</label>
+      <input type="text" id="walletInput" placeholder="erd1... or @herotag" autocomplete="off" />
     </form>
     <button class="btn" id="calculateBtn">Calculate Rewards</button>
   </div>
@@ -356,26 +355,59 @@ addRewardForm.addEventListener('submit', async e => {
   await loadConfig();
 });
 
+// --- NEW HELPER: Resolve Address ---
+async function resolveAddress(input) {
+  let cleanInput = input.trim();
+  
+  // If it starts with 'erd1' and seems like a valid length, assume address
+  if (cleanInput.startsWith('erd1') && cleanInput.length === 62) {
+    return cleanInput;
+  }
+  
+  // Otherwise assume Herotag
+  // Remove '@' if present
+  if (cleanInput.startsWith('@')) {
+    cleanInput = cleanInput.substring(1);
+  }
+  
+  try {
+    const res = await fetch(`https://api.multiversx.com/usernames/${cleanInput}`);
+    if (!res.ok) throw new Error('Herotag not found');
+    const data = await res.json();
+    return data.address;
+  } catch (err) {
+    throw new Error(`Could not resolve Herotag: ${input}`);
+  }
+}
+
 calculateBtn.addEventListener('click', async () => {
-  const wallet = walletInput.value.trim();
+  const rawInput = walletInput.value.trim();
   totalRewardEl.textContent = '—';
   
-  // Reset Rank Display
   walletRankDisplay.innerHTML = 'Loading...';
   
   categoryTotalsEl.innerHTML = '';
   categoriesContainer.innerHTML = '';
   excludedList.innerHTML = '';
   
-  if (!wallet) {
-    alert('Please enter a wallet address');
+  if (!rawInput) {
+    alert('Please enter a wallet address or Herotag');
     walletRankDisplay.innerHTML = '—';
     return;
   }
+  
   totalRewardEl.textContent = 'Loading...';
 
   try {
+    // 1. Resolve Herotag to Address
+    const wallet = await resolveAddress(rawInput);
+    // Update input to show resolved address (optional, good UX)
+    // walletInput.value = wallet;
+
+    // 2. Fetch EMP Data
     const empPromise = fetch(`/api/rewards/${wallet}/${empCollectionId}`);
+    
+    // 3. Fetch FHODL Data
     const fhodlPromise = fetch(`https://api.multiversx.com/accounts/${wallet}/nfts?collection=${fhodlCollectionId}&size=2000`);
 
     const [empRes, fhodlRes] = await Promise.all([empPromise, fhodlPromise]);
@@ -408,15 +440,12 @@ calculateBtn.addEventListener('click', async () => {
     else if (totalEmpNFTs >= 10) { rankName = 'Fish'; rankClass = 'rank-fish'; }
     else if (totalEmpNFTs >= 1) { rankName = 'Plankton'; rankClass = 'rank-plankton'; }
     
-    // --- DISPLAY RANK & COUNT ---
-    walletRankDisplay.innerHTML = ''; // Clear loading
+    walletRankDisplay.innerHTML = ''; 
     if (totalEmpNFTs >= 1) {
-        // Create Badge
         const badge = document.createElement('span');
         badge.className = `rank-badge ${rankClass}`;
         badge.textContent = rankName;
         
-        // Create Count Label
         const countLabel = document.createElement('div');
         countLabel.style.fontSize = '0.5em';
         countLabel.style.marginTop = '8px';
@@ -428,6 +457,7 @@ calculateBtn.addEventListener('click', async () => {
         walletRankDisplay.appendChild(countLabel);
     } else {
         walletRankDisplay.textContent = "No EMP NFTs";
+        walletRankDisplay.className = "metric-value";
     }
 
     // --- CATEGORIES ---
@@ -505,11 +535,12 @@ calculateBtn.addEventListener('click', async () => {
   } catch (e) {
     totalRewardEl.textContent = 'Error';
     walletRankDisplay.textContent = 'Error';
+    alert(e.message); // Show error to user (e.g., Herotag not found)
     console.error(e);
   }
 });
 
-// ... Resync and Load logic remains same ...
+// ... Resync and Load logic ...
 document.getElementById('resyncCollectionBtn').addEventListener('click', async () => {
   try {
     const res = await fetch(`/api/all-traits/${empCollectionId}`);

@@ -39,29 +39,32 @@
       --input-bg: #ffffff;
     }
 
-    /* DARK THEME (Mint & Black) */
+    /* DARK THEME (Intensified Neon) */
     [data-theme="dark"] {
-      --bg-body: #050505;
-      --bg-container: #000000;
-      --bg-header: #000000;
-      --bg-section: #111111;
-      --bg-card: #111111;
-      --bg-hover: #1a1a1a;
-      --bg-thead: #1a1a1a;
+      --bg-body: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+      --bg-container: #111116;
+      --bg-header: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      
+      --bg-section: #0a0a0f;
+      --bg-card: #16161e;
+      --bg-hover: #1f1f2e;
+      --bg-thead: #13131a;
       
       --text-main: #e0e0e0;
-      --text-secondary: #888888;
+      --text-secondary: #9494a8;
       --text-header: #00ffc3;
       --text-accent: #00ffc3;
       
-      --border-color: #333333;
-      --shadow-color: rgba(0, 255, 195, 0.05);
-      --shadow-container: rgba(0,0,0,0.8);
+      --border-color: #2a2a35;
       
-      --btn-bg: #000000;
-      --btn-border: #333;
+      /* --- GLOW EFFECTS --- */
+      --shadow-color: 0 4px 12px rgba(0, 255, 195, 0.15); 
+      --shadow-container: 0 0 35px rgba(0, 255, 195, 0.25); 
+      
+      --btn-bg: #1a1a24;
+      --btn-border: #333344;
       --btn-text: #00ffc3;
-      --btn-hover: #1a1a1a;
+      --btn-hover: #252538;
       
       --btn-primary-bg: #00ffc3;
       --btn-primary-text: #000000;
@@ -69,7 +72,7 @@
       --progress-gradient: linear-gradient(90deg, #00ffc3 0%, #00b894 100%);
       --toggle-active-bg: #00ffc3;
       
-      --input-bg: #1a1a1a;
+      --input-bg: #121218;
     }
 
     * {
@@ -112,6 +115,7 @@
     .header h1 {
       font-size: 2.5rem;
       margin-bottom: 0.5rem;
+      text-shadow: 0 0 10px rgba(0, 255, 195, 0.3);
     }
     
     .header p {
@@ -133,10 +137,14 @@
       background: var(--bg-card);
       padding: 1.5rem;
       border-radius: 10px;
-      box-shadow: 0 4px 6px var(--shadow-color);
+      box-shadow: var(--shadow-color);
       text-align: center;
-      transition: background 0.3s;
+      transition: background 0.3s, transform 0.2s;
       border: 1px solid var(--border-color);
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-2px);
     }
     
     .stat-card h3 {
@@ -150,6 +158,7 @@
       color: var(--text-accent);
       font-size: 2.5rem;
       font-weight: bold;
+      text-shadow: 0 0 8px rgba(0, 255, 195, 0.2);
     }
     
     .controls-bar {
@@ -185,17 +194,20 @@
     .btn:hover {
       background: var(--btn-hover);
       border-color: var(--text-accent);
+      box-shadow: 0 0 8px rgba(0, 255, 195, 0.3);
     }
 
     .btn-primary {
       background: var(--btn-primary-bg);
       border-color: var(--btn-primary-bg);
       color: var(--btn-primary-text);
+      box-shadow: 0 0 10px rgba(0, 255, 195, 0.2);
     }
 
     .btn-primary:hover {
       opacity: 0.9;
       background: var(--btn-primary-bg);
+      box-shadow: 0 0 15px rgba(0, 255, 195, 0.4);
     }
     
     .search-input {
@@ -212,7 +224,7 @@
     .search-input:focus {
       outline: none;
       border-color: var(--text-accent);
-      box-shadow: 0 0 0 2px var(--shadow-color);
+      box-shadow: 0 0 10px rgba(0, 255, 195, 0.2);
     }
 
     .content {
@@ -230,10 +242,14 @@
     .trait-category {
       background: var(--bg-card);
       border-radius: 10px;
-      box-shadow: 0 4px 6px var(--shadow-color);
+      box-shadow: var(--shadow-color);
       overflow: hidden;
       border: 1px solid var(--border-color);
       transition: box-shadow 0.2s, background 0.3s, border-color 0.3s;
+    }
+    
+    .trait-category:hover {
+        border-color: var(--text-accent);
     }
     
     .trait-category h3 {
@@ -343,6 +359,7 @@
     .progress-fill {
       height: 100%;
       background: var(--progress-gradient);
+      box-shadow: 0 0 8px rgba(0, 255, 195, 0.4);
     }
     
     .loading {
@@ -415,10 +432,29 @@
     
     input:checked + .slider {
       background-color: var(--toggle-active-bg);
+      box-shadow: 0 0 10px rgba(0, 255, 195, 0.4);
     }
     
     input:checked + .slider:before {
       transform: translateX(22px);
+    }
+    
+    /* SECTION HEADER STYLE */
+    .section-header {
+        grid-column: 1 / -1;
+        padding-bottom: 10px;
+        border-bottom: 2px solid var(--text-accent);
+        margin-top: 20px;
+        margin-bottom: 10px;
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: var(--text-accent);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        text-shadow: 0 0 5px rgba(0, 255, 195, 0.3);
+    }
+    .section-header:first-child {
+        margin-top: 0;
     }
   </style>
 </head>
@@ -535,44 +571,34 @@
           return res.json();
         }).then(traitData => {
            
-           // --- CATEGORY FILTERING LOGIC ---
-           // We are filtering at the ROOT level (Categories), not traits inside a category.
-           // Because "LegendaryGold_Head" is a CATEGORY in your dataset.
-           
+           // --- CATEGORY FILTERING LOGIC (STRICT) ---
            const allowedLegendaries = [
                'legendarygold_head', 
                'legendarysilver_head', 
                'legendaryrusty_head'
            ];
 
-           // Get all Category names
            const categories = Object.keys(traitData);
            
            categories.forEach(catName => {
                const lowerCat = catName.toLowerCase();
-               
-               // If this is a "Legendary" category...
                if (lowerCat.includes('legendary')) {
-                   // ...check if it is one of the ALLOWED ones
                    if (!allowedLegendaries.includes(lowerCat)) {
-                       // If NOT allowed (e.g. LegendaryGold_Background), delete it
                        delete traitData[catName];
                    }
                }
            });
-           // --------------------------------
+           // -------------------------------------------------
 
            globalTraitData = traitData;
            renderTraits(traitData, globalTotalNFTs);
 
-           // --- SYNC CATEGORIES COUNT ---
            const actualCategoryCount = Object.keys(traitData).length;
            document.getElementById('category-count').textContent = actualCategoryCount;
 
-           // --- TOTAL UNIQUE TRAITS & ADD CARD ---
            let totalUniqueTraits = 0;
            Object.values(traitData).forEach(cat => totalUniqueTraits += Object.keys(cat).length);
-           const totalPossible = 396;
+           const totalPossible = 370; 
 
            const newCard = document.createElement('div');
            newCard.className = 'stat-card';
@@ -599,59 +625,83 @@
       const container = document.getElementById('traits-container');
       container.innerHTML = ''; 
       
-      const sortedCategories = Object.keys(traitData).sort();
+      const allCategories = Object.keys(traitData);
       
-      sortedCategories.forEach(category => {
-        const traitsObj = traitData[category];
-        const sortedTraits = Object.entries(traitsObj).sort((a, b) => b[1] - a[1]);
-        
-        const categoryTotal = Object.values(traitsObj).reduce((sum, count) => sum + count, 0);
-
-        let rowsHtml = '';
-        sortedTraits.forEach(([traitName, count]) => {
-          const percentage = totalNFTs > 0 ? ((count / totalNFTs) * 100).toFixed(2) : 0;
-          rowsHtml += `
-            <tr>
-              <td>${traitName}</td>
-              <td class="count-col">${count}</td>
-              <td class="percentage">${percentage}%</td>
-              <td style="width: 100px;">
-                <div class="progress-bar">
-                  <div class="progress-fill" style="width: ${percentage}%"></div>
-                </div>
-              </td>
-            </tr>
-          `;
-        });
-        
-        const categoryHtml = `
-          <div class="trait-category collapsed" id="cat-${category.replace(/\s+/g, '-')}">
-            <h3 onclick="toggleCategory(this)">
-              <span>${category}</span>
-              <span class="trait-count-badge">Total: ${categoryTotal}</span>
-              <span class="toggle-icon">▼</span>
-            </h3>
-            <table>
-              <thead>
-                <tr>
-                  <th>Trait Name</th>
-                  <th>Count</th>
-                  <th>%</th>
-                  <th>Freq</th>
-                </tr>
-              </thead>
-              <tbody class="trait-rows">
-                ${rowsHtml}
-              </tbody>
-            </table>
-          </div>
-        `;
-        
-        container.innerHTML += categoryHtml;
+      // Filter the two groups
+      // 1. LEGENDARY: sort using custom logic (Gold -> Silver -> Rusty)
+      const legendaryOrder = ['gold', 'silver', 'rusty'];
+      const legendaryCats = allCategories.filter(c => c.toLowerCase().includes('legendary')).sort((a, b) => {
+          const getOrder = (name) => {
+              const lower = name.toLowerCase();
+              const index = legendaryOrder.findIndex(key => lower.includes(key));
+              return index === -1 ? 99 : index;
+          };
+          return getOrder(a) - getOrder(b);
       });
+
+      // 2. GENERAL: sort alphabetically
+      const generalCats = allCategories.filter(c => !c.toLowerCase().includes('legendary')).sort();
+      
+      const renderCategoryList = (categories) => {
+          categories.forEach(category => {
+            const traitsObj = traitData[category];
+            const sortedTraits = Object.entries(traitsObj).sort((a, b) => b[1] - a[1]);
+            const categoryTotal = Object.values(traitsObj).reduce((sum, count) => sum + count, 0);
+
+            let rowsHtml = '';
+            sortedTraits.forEach(([traitName, count]) => {
+              const percentage = totalNFTs > 0 ? ((count / totalNFTs) * 100).toFixed(2) : 0;
+              rowsHtml += `
+                <tr>
+                  <td>${traitName}</td>
+                  <td class="count-col">${count}</td>
+                  <td class="percentage">${percentage}%</td>
+                  <td style="width: 100px;">
+                    <div class="progress-bar">
+                      <div class="progress-fill" style="width: ${percentage}%"></div>
+                    </div>
+                  </td>
+                </tr>
+              `;
+            });
+            
+            const categoryHtml = `
+              <div class="trait-category collapsed" id="cat-${category.replace(/\s+/g, '-')}">
+                <h3 onclick="toggleCategory(this)">
+                  <span>${category}</span>
+                  <span class="trait-count-badge">Total: ${categoryTotal}</span>
+                  <span class="toggle-icon">▼</span>
+                </h3>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Trait Name</th>
+                      <th>Count</th>
+                      <th>%</th>
+                      <th>Freq</th>
+                    </tr>
+                  </thead>
+                  <tbody class="trait-rows">
+                    ${rowsHtml}
+                  </tbody>
+                </table>
+              </div>
+            `;
+            container.innerHTML += categoryHtml;
+          });
+      };
+
+      if (legendaryCats.length > 0) {
+          container.innerHTML += `<div class="section-header">Legendary Traits</div>`;
+          renderCategoryList(legendaryCats);
+      }
+
+      if (generalCats.length > 0) {
+          container.innerHTML += `<div class="section-header">General Traits</div>`;
+          renderCategoryList(generalCats);
+      }
     }
 
-    // --- SEARCH FUNCTION ---
     function filterTraits() {
       const input = document.getElementById('searchInput');
       const filter = input.value.toLowerCase();
@@ -660,7 +710,6 @@
       for (let i = 0; i < categories.length; i++) {
         const category = categories[i];
         
-        // Check if Category Name matches
         const categoryNameEl = category.querySelector('h3 span:first-child');
         const categoryName = categoryNameEl ? categoryNameEl.textContent.toLowerCase() : "";
         const isCategoryMatch = categoryName.indexOf(filter) > -1;
@@ -668,12 +717,10 @@
         const rows = category.getElementsByTagName('tr');
         let hasVisibleRows = false;
 
-        // Start from j=1 to skip the header row
         for (let j = 1; j < rows.length; j++) {
           const td = rows[j].getElementsByTagName('td')[0];
           if (td) {
             const txtValue = td.textContent || td.innerText;
-            // Show row if: Category matches OR Trait Name matches
             if (isCategoryMatch || txtValue.toLowerCase().indexOf(filter) > -1) {
               rows[j].style.display = "";
               hasVisibleRows = true;
@@ -683,7 +730,6 @@
           }
         }
 
-        // Show/Hide Category Container
         if (filter === "") {
           category.style.display = "";
         } else {

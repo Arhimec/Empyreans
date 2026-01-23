@@ -4,123 +4,67 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NFT Collection Statistics - EMP-897b49</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
   <style>
     /* --- CSS VARIABLES --- */
     :root {
-      /* LIGHT THEME (Default) */
-      --bg-body: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      --bg-container: #ffffff;
-      --bg-header: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      --bg-section: #f8f9fa;
-      --bg-card: #ffffff;
-      --bg-hover: #f8f9fa;
-      --bg-thead: #fafafa;
+      /* Shared Theme Logic */
+      --bg: #05070a;
+      --card-bg: rgba(13, 17, 23, 0.7);
+      --accent: #00ffc3;
+      --accent-glow: rgba(0, 255, 195, 0.4);
+      --text-main: #e6edf3;
+      --text-dim: #8b949e;
+      --border: rgba(255, 255, 255, 0.1);
       
-      --text-main: #333333;
-      --text-secondary: #666666;
-      --text-header: #ffffff;
-      --text-accent: #667eea;
+      /* Specifics for stats page */
+      --bg-body: radial-gradient(circle at top right, #161b22, #05070a);
+      --bg-section: transparent;
+      --bg-hover: rgba(255, 255, 255, 0.05);
+      --shadow-container: 0 0 30px rgba(0, 0, 0, 0.5);
       
-      --border-color: #e0e0e0;
-      --shadow-color: rgba(0,0,0,0.1);
-      --shadow-container: rgba(0,0,0,0.3);
-      
-      --btn-bg: #ffffff;
-      --btn-border: #ddd;
-      --btn-text: #555;
-      --btn-hover: #f5f5f5;
-      
-      --btn-primary-bg: #667eea;
-      --btn-primary-text: #ffffff;
-      
-      --progress-gradient: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-      --toggle-active-bg: #667eea;
-      
-      --input-bg: #ffffff;
+      --btn-bg: var(--accent);
+      --btn-text: #05070a;
     }
 
-    /* DARK THEME (Intensified Neon) */
-    [data-theme="dark"] {
-      --bg-body: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
-      --bg-container: #111116;
-      --bg-header: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-      
-      --bg-section: #0a0a0f;
-      --bg-card: #16161e;
-      --bg-hover: #1f1f2e;
-      --bg-thead: #13131a;
-      
-      --text-main: #e0e0e0;
-      --text-secondary: #9494a8;
-      --text-header: #00ffc3;
-      --text-accent: #00ffc3;
-      
-      --border-color: #2a2a35;
-      
-      /* --- GLOW EFFECTS --- */
-      --shadow-color: 0 4px 12px rgba(0, 255, 195, 0.15); 
-      --shadow-container: 0 0 35px rgba(0, 255, 195, 0.25); 
-      
-      --btn-bg: #1a1a24;
-      --btn-border: #333344;
-      --btn-text: #00ffc3;
-      --btn-hover: #252538;
-      
-      --btn-primary-bg: #00ffc3;
-      --btn-primary-text: #000000;
-      
-      --progress-gradient: linear-gradient(90deg, #00ffc3 0%, #00b894 100%);
-      --toggle-active-bg: #00ffc3;
-      
-      --input-bg: #121218;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Inter', sans-serif;
       background: var(--bg-body);
       min-height: 100vh;
-      padding: 2rem;
       color: var(--text-main);
-      transition: background 0.3s, color 0.3s;
+      padding: 2rem;
     }
     
     .container {
       max-width: 1400px;
       margin: 0 auto;
-      background: var(--bg-container);
+      background: var(--card-bg);
       border-radius: 20px;
-      box-shadow: 0 20px 60px var(--shadow-container);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-container);
+      backdrop-filter: blur(10px);
       overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      transition: background 0.3s, box-shadow 0.3s;
-      border: 1px solid var(--border-color);
     }
     
     .header {
-      background: var(--bg-header);
-      color: var(--text-header);
+      background: rgba(0,0,0,0.2);
+      border-bottom: 1px solid var(--border);
       padding: 2rem;
       text-align: center;
-      transition: background 0.3s;
-      border-bottom: 1px solid var(--border-color);
     }
     
     .header h1 {
-      font-size: 2.5rem;
+      font-size: 2rem;
+      font-weight: 800;
+      background: linear-gradient(90deg, #fff, var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
       margin-bottom: 0.5rem;
-      text-shadow: 0 0 10px rgba(0, 255, 195, 0.3);
-    }
-    
-    .header p {
-      font-size: 1.1rem;
-      opacity: 0.9;
     }
     
     .stats-summary {
@@ -128,419 +72,233 @@
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 1.5rem;
       padding: 2rem;
-      background: var(--bg-section);
-      border-bottom: 1px solid var(--border-color);
-      transition: background 0.3s;
     }
     
     .stat-card {
-      background: var(--bg-card);
+      background: rgba(255,255,255,0.03);
       padding: 1.5rem;
-      border-radius: 10px;
-      box-shadow: var(--shadow-color);
+      border-radius: 12px;
+      border: 1px solid var(--border);
       text-align: center;
-      transition: background 0.3s, transform 0.2s;
-      border: 1px solid var(--border-color);
+      transition: 0.3s;
     }
     
     .stat-card:hover {
+        border-color: var(--accent);
+        box-shadow: 0 0 15px var(--accent-glow);
         transform: translateY(-2px);
     }
     
     .stat-card h3 {
-      color: var(--text-secondary);
-      font-size: 0.9rem;
+      color: var(--text-dim);
+      font-size: 0.75rem;
       text-transform: uppercase;
+      letter-spacing: 1px;
       margin-bottom: 0.5rem;
     }
     
     .stat-card .value {
-      color: var(--text-accent);
-      font-size: 2.5rem;
-      font-weight: bold;
-      text-shadow: 0 0 8px rgba(0, 255, 195, 0.2);
+      color: var(--accent);
+      font-size: 2.2rem;
+      font-weight: 800;
     }
     
     .controls-bar {
       padding: 1.5rem 2rem;
-      background: var(--bg-container);
-      border-bottom: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border);
       display: flex;
       justify-content: space-between;
-      align-items: center;
       flex-wrap: wrap;
       gap: 1rem;
-    }
-
-    .controls-group {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      flex-wrap: wrap;
+      background: rgba(0,0,0,0.2);
     }
 
     .btn {
-      padding: 0.6rem 1.2rem;
-      border-radius: 6px;
-      border: 1px solid var(--btn-border);
       background: var(--btn-bg);
-      cursor: pointer;
-      font-weight: 600;
       color: var(--btn-text);
-      transition: all 0.2s;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      transition: 0.3s;
       font-size: 0.9rem;
     }
 
     .btn:hover {
-      background: var(--btn-hover);
-      border-color: var(--text-accent);
-      box-shadow: 0 0 8px rgba(0, 255, 195, 0.3);
-    }
-
-    .btn-primary {
-      background: var(--btn-primary-bg);
-      border-color: var(--btn-primary-bg);
-      color: var(--btn-primary-text);
-      box-shadow: 0 0 10px rgba(0, 255, 195, 0.2);
-    }
-
-    .btn-primary:hover {
-      opacity: 0.9;
-      background: var(--btn-primary-bg);
-      box-shadow: 0 0 15px rgba(0, 255, 195, 0.4);
+      box-shadow: 0 0 15px var(--accent-glow);
+      transform: scale(1.02);
     }
     
     .search-input {
-      padding: 0.6rem 1rem;
-      border-radius: 6px;
-      border: 1px solid var(--btn-border);
-      background: var(--input-bg);
-      color: var(--text-main);
-      font-size: 0.9rem;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid var(--border);
+      padding: 10px 15px;
+      border-radius: 8px;
+      color: white;
       width: 250px;
-      transition: all 0.2s;
     }
     
     .search-input:focus {
       outline: none;
-      border-color: var(--text-accent);
-      box-shadow: 0 0 10px rgba(0, 255, 195, 0.2);
+      border-color: var(--accent);
     }
 
-    .content {
-      padding: 2rem;
-      flex: 1;
-    }
+    .content { padding: 2rem; }
     
     .traits-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
       gap: 1.5rem;
-      align-items: start;
     }
     
+    /* --- RESTORED COLLAPSE LOGIC CSS --- */
     .trait-category {
-      background: var(--bg-card);
-      border-radius: 10px;
-      box-shadow: var(--shadow-color);
+      background: rgba(255,255,255,0.02);
+      border-radius: 12px;
+      border: 1px solid var(--border);
       overflow: hidden;
-      border: 1px solid var(--border-color);
-      transition: box-shadow 0.2s, background 0.3s, border-color 0.3s;
-    }
-    
-    .trait-category:hover {
-        border-color: var(--text-accent);
+      transition: all 0.3s ease;
     }
     
     .trait-category h3 {
-      background: var(--bg-section);
+      background: rgba(255,255,255,0.05);
       padding: 1rem;
+      margin: 0;
       color: var(--text-main);
-      font-size: 1.1rem;
-      border-bottom: 2px solid var(--text-accent);
+      font-size: 1rem;
+      border-bottom: 1px solid var(--border);
       cursor: pointer;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      user-select: none;
       transition: background 0.2s;
     }
     
-    .trait-category h3:hover {
-      background: var(--bg-hover);
-    }
-
-    .trait-category h3 .toggle-icon {
-      font-size: 0.8rem;
-      transition: transform 0.3s ease;
-      color: var(--text-accent);
-    }
+    .trait-category h3:hover { background: var(--bg-hover); }
     
-    .trait-category.collapsed h3 {
-      border-bottom: 1px solid transparent;
-    }
-
-    .trait-category.collapsed h3 .toggle-icon {
-      transform: rotate(-90deg);
-    }
-
+    /* Hide table when collapsed */
     .trait-category.collapsed table {
       display: none;
     }
-
+    
+    /* Remove border from header when collapsed */
+    .trait-category.collapsed h3 {
+      border-bottom: 1px solid transparent;
+    }
+    
+    /* Rotate arrow when collapsed */
+    .trait-category.collapsed .arrow-icon {
+      transform: rotate(-90deg);
+    }
+    
+    .arrow-icon {
+      transition: transform 0.3s ease;
+      font-size: 0.8rem; 
+      color: var(--accent);
+    }
+    /* ----------------------------------- */
+    
     .trait-count-badge {
-      background: var(--bg-hover);
-      border: 1px solid var(--border-color);
-      padding: 0.2rem 0.6rem;
-      border-radius: 12px;
-      font-size: 0.8rem;
-      color: var(--text-secondary);
-      margin-left: auto;
-      margin-right: 0.5rem;
-    }
-    
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    
-    thead {
-      background: var(--bg-thead);
-      color: var(--text-secondary);
-    }
-    
-    th, td {
-      padding: 0.8rem 1rem;
-      text-align: left;
-      font-size: 0.9rem;
-      color: var(--text-main);
-    }
-    
-    th {
-      font-weight: 600;
-      text-transform: uppercase;
+      background: rgba(0,0,0,0.3);
+      padding: 2px 8px;
+      border-radius: 4px;
       font-size: 0.75rem;
-      letter-spacing: 0.5px;
+      color: var(--text-dim);
+      margin-left: auto;
+      margin-right: 10px;
     }
     
-    tbody tr {
-      border-bottom: 1px solid var(--bg-section);
-    }
-    
-    tbody tr:hover {
-      background: var(--bg-hover);
-    }
-    
-    tbody tr:last-child {
-      border-bottom: none;
-    }
-    
-    .percentage {
-      color: var(--text-accent);
-      font-weight: bold;
-      width: 70px;
-      text-align: right;
-    }
-    
-    .count-col {
-      width: 80px;
-    }
+    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    th { text-align: left; padding: 10px; color: var(--text-dim); font-size: 0.75rem; border-bottom: 1px solid var(--border); }
+    td { padding: 10px; border-bottom: 1px solid var(--border); color: var(--text-main); }
+    tr:last-child td { border-bottom: none; }
     
     .progress-bar {
-      width: 100%;
-      height: 6px;
-      background: var(--bg-section);
-      border: 1px solid var(--border-color);
-      border-radius: 3px;
+      height: 4px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 2px;
       overflow: hidden;
-      margin-top: 0.4rem;
+      margin-top: 5px;
     }
     
     .progress-fill {
       height: 100%;
-      background: var(--progress-gradient);
-      box-shadow: 0 0 8px rgba(0, 255, 195, 0.4);
+      background: var(--accent);
+      box-shadow: 0 0 5px var(--accent-glow);
     }
     
-    .loading {
-      text-align: center;
-      padding: 3rem;
-      color: var(--text-secondary);
-      width: 100%;
-    }
-    
-    /* UPDATED FOOTER STYLES */
-    .footer {
-      text-align: center;
-      color: var(--text-secondary);
-      padding: 1.5rem;
-      font-size: 0.9rem;
-      background: var(--bg-section);
-      border-top: 1px solid var(--border-color);
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-    
-    .footer .credits {
-      font-weight: bold; 
-      opacity: 0.8;
-      color: var(--text-accent);
-      text-shadow: 0 0 5px rgba(0, 255, 195, 0.2);
-    }
-    
-    .error {
-      background: #fee;
-      color: #c33;
-      padding: 1rem;
-      border-radius: 5px;
-      margin: 1rem;
-      text-align: center;
-    }
-
-    /* --- SWITCH SLIDER STYLE --- */
-    .theme-switch-wrapper {
-      display: flex;
-      align-items: center;
-      margin-right: 1rem;
-    }
-    
-    .theme-switch {
-      display: inline-block;
-      height: 24px;
-      position: relative;
-      width: 46px;
-      margin-right: 8px;
-    }
-    
-    .theme-switch input {
-      display: none;
-    }
-    
-    .slider {
-      background-color: #ccc;
-      bottom: 0;
-      cursor: pointer;
-      left: 0;
-      position: absolute;
-      right: 0;
-      top: 0;
-      transition: .4s;
-      border-radius: 34px;
-    }
-    
-    .slider:before {
-      background-color: #fff;
-      bottom: 4px;
-      content: "";
-      height: 16px;
-      left: 4px;
-      position: absolute;
-      transition: .4s;
-      width: 16px;
-      border-radius: 50%;
-    }
-    
-    input:checked + .slider {
-      background-color: var(--toggle-active-bg);
-      box-shadow: 0 0 10px rgba(0, 255, 195, 0.4);
-    }
-    
-    input:checked + .slider:before {
-      transform: translateX(22px);
-    }
-    
-    /* SECTION HEADER STYLE */
     .section-header {
         grid-column: 1 / -1;
         padding-bottom: 10px;
-        border-bottom: 2px solid var(--text-accent);
-        margin-top: 20px;
-        margin-bottom: 10px;
+        border-bottom: 2px solid var(--accent);
+        margin-top: 30px;
+        margin-bottom: 15px;
         font-size: 1.2rem;
-        font-weight: bold;
-        color: var(--text-accent);
+        font-weight: 800;
+        color: var(--accent);
         text-transform: uppercase;
         letter-spacing: 1px;
-        text-shadow: 0 0 5px rgba(0, 255, 195, 0.3);
+        text-shadow: 0 0 10px var(--accent-glow);
     }
-    .section-header:first-child {
-        margin-top: 0;
+    .section-header:first-child { margin-top: 0; }
+
+    /* FOOTER */
+    .footer {
+      text-align: center;
+      padding: 2rem;
+      background: rgba(0,0,0,0.2);
+      border-top: 1px solid var(--border);
+      color: var(--text-dim);
+      font-size: 0.9rem;
     }
+    
+    .footer .credits {
+      margin-top: 8px;
+      font-weight: 700;
+      color: var(--accent);
+      opacity: 0.8;
+    }
+    
+    .theme-switch-wrapper { display: none; } 
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
       <h1>🚀 NFT Collection Statistics</h1>
-      <p>EMP-897b49 Collection Analytics</p>
+      <p style="color: var(--text-dim);">EMP-897b49 Collection Analytics</p>
     </div>
     
     <div class="stats-summary" id="summary">
-      <div class="loading">Loading summary...</div>
+      <div style="grid-column:1/-1; text-align:center; color:var(--text-dim);">Loading summary...</div>
     </div>
 
     <div class="controls-bar">
       <div class="controls-group">
-        <div class="theme-switch-wrapper">
-           <label class="theme-switch" for="checkbox">
-            <input type="checkbox" id="checkbox" />
-            <div class="slider"></div>
-          </label>
-          <span style="font-size: 0.9rem; font-weight: 600; color: var(--text-secondary)">Dark Mode</span>
-        </div>
+        <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search traits..." oninput="filterTraits()">
       </div>
 
       <div class="controls-group">
-        <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search traits or categories..." oninput="filterTraits()">
-      </div>
-
-      <div class="controls-group">
-        <button class="btn btn-primary" onclick="exportToCSV()">📥 Download CSV</button>
-      </div>
-      <div class="controls-group">
-        <button class="btn" onclick="toggleAll(false)">Expand All</button>
-        <button class="btn" onclick="toggleAll(true)">Collapse All</button>
+        <button class="btn" onclick="exportToCSV()">📥 CSV</button>
+        <button class="btn" style="background:transparent; border:1px solid var(--border); color:var(--text-main);" onclick="toggleAll(false)">Expand</button>
+        <button class="btn" style="background:transparent; border:1px solid var(--border); color:var(--text-main);" onclick="toggleAll(true)">Collapse</button>
       </div>
     </div>
     
     <div class="content">
       <div id="traits-container" class="traits-grid">
-        <div class="loading">Loading detailed trait data...</div>
+        <div style="grid-column:1/-1; text-align:center; color:var(--text-dim);">Loading detailed data...</div>
       </div>
     </div>
     
-    <div class="footer" id="footer">
+    <div class="footer">
         <div id="last-updated"></div>
-        <div class="credits">Vibecoded by a $FEDUP clown</div>
+        <div class="credits">Built by a $FEDUP clown</div>
     </div>
   </div>
 
   <script>
-    // --- THEME LOGIC ---
-    const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
-    const currentTheme = localStorage.getItem('theme');
-
-    if (currentTheme) {
-        document.documentElement.setAttribute('data-theme', currentTheme);
-        if (currentTheme === 'dark') {
-            toggleSwitch.checked = true;
-        }
-    }
-
-    function switchTheme(e) {
-        if (e.target.checked) {
-            document.documentElement.setAttribute('data-theme', 'dark');
-            localStorage.setItem('theme', 'dark');
-        } else {
-            document.documentElement.setAttribute('data-theme', 'light');
-            localStorage.setItem('theme', 'light');
-        }
-    }
-
-    toggleSwitch.addEventListener('change', switchTheme, false);
-    // -------------------
-
     // Global variables
     let globalTraitData = null;
     let globalTotalNFTs = 0;
@@ -550,7 +308,6 @@
       .then(response => response.json())
       .then(data => {
         globalTotalNFTs = data.totalNFTs || data.total || 0;
-        
         const maxSupply = 10000;
         const remainingSupply = maxSupply - globalTotalNFTs;
 
@@ -576,7 +333,6 @@
         
         if (data.lastUpdated) {
           const date = new Date(data.lastUpdated);
-          // Update the dedicated element inside the footer
           document.getElementById('last-updated').innerHTML = `Last updated: ${date.toLocaleString()}`;
         }
         
@@ -594,10 +350,8 @@
            ];
 
            const categories = Object.keys(traitData);
-           
            categories.forEach(catName => {
                const lowerCat = catName.toLowerCase();
-               
                if (lowerCat.includes('legendary')) {
                    if (!allowedLegendaries.includes(lowerCat)) {
                        delete traitData[catName];
@@ -614,7 +368,7 @@
 
            let totalUniqueTraits = 0;
            Object.values(traitData).forEach(cat => totalUniqueTraits += Object.keys(cat).length);
-           const totalPossible = 396; 
+           const totalPossible = 370; 
 
            const newCard = document.createElement('div');
            newCard.className = 'stat-card';
@@ -622,7 +376,7 @@
              <h3>Unique Traits</h3>
              <div class="value">
                 ${totalUniqueTraits} 
-                <span style="font-size: 0.5em; vertical-align: middle; opacity: 0.7;">/ ${totalPossible}</span>
+                <span style="font-size: 0.5em; vertical-align: middle; opacity: 0.7; color:var(--text-dim);">/ ${totalPossible}</span>
              </div>
            `;
            document.getElementById('summary').appendChild(newCard);
@@ -631,10 +385,7 @@
       })
       .catch(error => {
         console.error(error);
-        document.getElementById('summary').innerHTML = 
-          `<div class="error">Error loading stats: ${error.message}</div>`;
-        document.getElementById('traits-container').innerHTML = 
-          `<div class="error">Failed to load detailed traits. Please ensure server has generated stats.</div>`;
+        document.getElementById('summary').innerHTML = `<div class="error">Error loading stats</div>`;
       });
 
     function renderTraits(traitData, totalNFTs) {
@@ -643,8 +394,7 @@
       
       const allCategories = Object.keys(traitData);
       
-      // Filter the two groups
-      // 1. LEGENDARY: sort using custom logic (Gold -> Silver -> Rusty)
+      // Filter & Sort
       const legendaryOrder = ['gold', 'silver', 'rusty'];
       const legendaryCats = allCategories.filter(c => c.toLowerCase().includes('legendary')).sort((a, b) => {
           const getOrder = (name) => {
@@ -655,7 +405,6 @@
           return getOrder(a) - getOrder(b);
       });
 
-      // 2. GENERAL: sort alphabetically
       const generalCats = allCategories.filter(c => !c.toLowerCase().includes('legendary')).sort();
       
       const renderCategoryList = (categories) => {
@@ -670,9 +419,9 @@
               rowsHtml += `
                 <tr>
                   <td>${traitName}</td>
-                  <td class="count-col">${count}</td>
-                  <td class="percentage">${percentage}%</td>
-                  <td style="width: 100px;">
+                  <td style="width:60px;">${count}</td>
+                  <td style="width:60px; text-align:right; font-weight:bold; color:var(--accent);">${percentage}%</td>
+                  <td style="width: 80px;">
                     <div class="progress-bar">
                       <div class="progress-fill" style="width: ${percentage}%"></div>
                     </div>
@@ -682,24 +431,19 @@
             });
             
             const categoryHtml = `
-              <div class="trait-category collapsed" id="cat-${category.replace(/\s+/g, '-')}">
-                <h3 onclick="toggleCategory(this)">
+              <div class="trait-category collapsed">
+                <h3 onclick="this.parentElement.classList.toggle('collapsed')">
                   <span>${category}</span>
-                  <span class="trait-count-badge">Total: ${categoryTotal}</span>
-                  <span class="toggle-icon">▼</span>
+                  <div style="display:flex; align-items:center;">
+                    <span class="trait-count-badge">Total: ${categoryTotal}</span>
+                    <span class="arrow-icon">▼</span>
+                  </div>
                 </h3>
                 <table>
                   <thead>
-                    <tr>
-                      <th>Trait Name</th>
-                      <th>Count</th>
-                      <th>%</th>
-                      <th>Freq</th>
-                    </tr>
+                    <tr><th>Trait</th><th>Count</th><th style="text-align:right;">%</th><th>Freq</th></tr>
                   </thead>
-                  <tbody class="trait-rows">
-                    ${rowsHtml}
-                  </tbody>
+                  <tbody>${rowsHtml}</tbody>
                 </table>
               </div>
             `;
@@ -719,88 +463,48 @@
     }
 
     function filterTraits() {
-      const input = document.getElementById('searchInput');
-      const filter = input.value.toLowerCase();
+      const filter = document.getElementById('searchInput').value.toLowerCase();
       const categories = document.getElementsByClassName('trait-category');
 
-      for (let i = 0; i < categories.length; i++) {
-        const category = categories[i];
+      for (let category of categories) {
+        const title = category.querySelector('h3 span').textContent.toLowerCase();
+        let hasMatch = title.includes(filter);
         
-        const categoryNameEl = category.querySelector('h3 span:first-child');
-        const categoryName = categoryNameEl ? categoryNameEl.textContent.toLowerCase() : "";
-        const isCategoryMatch = categoryName.indexOf(filter) > -1;
-
-        const rows = category.getElementsByTagName('tr');
-        let hasVisibleRows = false;
-
-        for (let j = 1; j < rows.length; j++) {
-          const td = rows[j].getElementsByTagName('td')[0];
-          if (td) {
-            const txtValue = td.textContent || td.innerText;
-            if (isCategoryMatch || txtValue.toLowerCase().indexOf(filter) > -1) {
-              rows[j].style.display = "";
-              hasVisibleRows = true;
+        const rows = category.querySelectorAll('tbody tr');
+        for (let row of rows) {
+            const trait = row.querySelector('td').textContent.toLowerCase();
+            if (trait.includes(filter) || title.includes(filter)) {
+                row.style.display = "";
+                hasMatch = true;
             } else {
-              rows[j].style.display = "none";
+                row.style.display = "none";
             }
-          }
         }
-
-        if (filter === "") {
-          category.style.display = "";
-        } else {
-          if (hasVisibleRows) {
-            category.style.display = "";
-            category.classList.remove('collapsed'); 
-          } else {
-            category.style.display = "none";
-          }
-        }
+        category.style.display = (filter === "" || hasMatch) ? "" : "none";
+        if(filter !== "" && hasMatch) category.classList.remove('collapsed');
       }
     }
 
-    function toggleCategory(headerElement) {
-      const container = headerElement.parentElement;
-      container.classList.toggle('collapsed');
-    }
-
-    function toggleAll(shouldCollapse) {
-      const categories = document.querySelectorAll('.trait-category');
-      categories.forEach(cat => {
-        if (shouldCollapse) {
-          cat.classList.add('collapsed');
-        } else {
-          cat.classList.remove('collapsed');
-        }
+    function toggleAll(collapse) {
+      document.querySelectorAll('.trait-category').forEach(cat => {
+        if(collapse) cat.classList.add('collapsed');
+        else cat.classList.remove('collapsed');
       });
     }
 
     function exportToCSV() {
-      if (!globalTraitData) {
-        alert("Data not loaded yet");
-        return;
-      }
-      let csvContent = "Category,Trait Name,Count,Percentage\n";
-      const sortedCategories = Object.keys(globalTraitData).sort();
-      sortedCategories.forEach(category => {
-        const traitsObj = globalTraitData[category];
-        const sortedTraits = Object.entries(traitsObj).sort((a, b) => b[1] - a[1]);
-        sortedTraits.forEach(([traitName, count]) => {
-          const percentage = globalTotalNFTs > 0 ? ((count / globalTotalNFTs) * 100).toFixed(2) : 0;
-          const safeCategory = `"${category.replace(/"/g, '""')}"`;
-          const safeTrait = `"${traitName.replace(/"/g, '""')}"`;
-          csvContent += `${safeCategory},${safeTrait},${count},${percentage}%\n`;
+      if (!globalTraitData) return;
+      let csv = "Category,Trait,Count,%\n";
+      Object.keys(globalTraitData).sort().forEach(cat => {
+        Object.entries(globalTraitData[cat]).forEach(([trait, count]) => {
+           const pct = globalTotalNFTs > 0 ? ((count/globalTotalNFTs)*100).toFixed(2) : 0;
+           csv += `"${cat}","${trait}",${count},${pct}%\n`;
         });
       });
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
-      link.setAttribute("href", url);
-      link.setAttribute("download", `emp_traits_stats_${new Date().toISOString().split('T')[0]}.csv`);
-      link.style.visibility = 'hidden';
-      document.body.appendChild(link);
+      link.href = URL.createObjectURL(new Blob([csv], {type: 'text/csv'}));
+      link.download = `emp_stats.csv`;
       link.click();
-      document.body.removeChild(link);
     }
   </script>
 </body>

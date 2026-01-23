@@ -1,17 +1,17 @@
 {
-  "total": 8322,
-  "totalNFTs": 8322,
+  "total": 8406,
+  "totalNFTs": 8406,
   "categories": {
-    "Rusty_Head": 2083,
-    "Brut_Head": 2913,
-    "Wood_Head": 1237,
-    "HODL_Head": 399,
-    "Silver_Head": 848,
-    "Gold_Head": 416,
-    "Astronaut": 423,
+    "HODL_Head": 406,
+    "Brut_Head": 2942,
+    "Gold_Head": 420,
+    "Rusty_Head": 2106,
+    "Silver_Head": 854,
+    "Astronaut": 428,
+    "Wood_Head": 1247,
     "LegendarySilver_Head": 1,
     "LegendaryRusty_Head": 1,
     "LegendaryGold_Head": 1
   },
-  "lastUpdated": "2026-01-22T14:47:36.471Z"
+  "lastUpdated": "2026-01-23T11:08:30.578Z"
 }

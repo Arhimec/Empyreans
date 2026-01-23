@@ -535,32 +535,32 @@
           return res.json();
         }).then(traitData => {
            
-           // --- CATEGORY FILTERING LOGIC ---
-           // We are filtering at the ROOT level (Categories), not traits inside a category.
-           // Because "LegendaryGold_Head" is a CATEGORY in your dataset.
+           // --- LEGENDARY FILTERING LOGIC ---
+           // 1. Find the category that contains 'legendary' in its name
+           const legendKey = Object.keys(traitData).find(k => k.toLowerCase().includes('legendary'));
            
-           const allowedLegendaries = [
-               'legendarygold_head', 
-               'legendarysilver_head', 
-               'legendaryrusty_head'
-           ];
-
-           // Get all Category names
-           const categories = Object.keys(traitData);
-           
-           categories.forEach(catName => {
-               const lowerCat = catName.toLowerCase();
+           if (legendKey) {
+               // 2. Define exactly which traits to keep
+               const allowedTraits = [
+                   'legendarygold_head', 
+                   'legendarysilver_head', 
+                   'legendaryrusty_head'
+               ];
                
-               // If this is a "Legendary" category...
-               if (lowerCat.includes('legendary')) {
-                   // ...check if it is one of the ALLOWED ones
-                   if (!allowedLegendaries.includes(lowerCat)) {
-                       // If NOT allowed (e.g. LegendaryGold_Background), delete it
-                       delete traitData[catName];
+               const filtered = {};
+               const sourceTraits = traitData[legendKey];
+               
+               // 3. Loop through existing traits and only keep matches
+               for (const [traitName, count] of Object.entries(sourceTraits)) {
+                   if (allowedTraits.includes(traitName.toLowerCase())) {
+                       filtered[traitName] = count;
                    }
                }
-           });
-           // --------------------------------
+               
+               // 4. Overwrite the category with the filtered version
+               traitData[legendKey] = filtered;
+           }
+           // ---------------------------------
 
            globalTraitData = traitData;
            renderTraits(traitData, globalTotalNFTs);

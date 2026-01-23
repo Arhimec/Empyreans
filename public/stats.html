@@ -369,13 +369,24 @@
       width: 100%;
     }
     
-    .timestamp {
+    /* UPDATED FOOTER STYLES */
+    .footer {
       text-align: center;
       color: var(--text-secondary);
-      padding: 1rem;
+      padding: 1.5rem;
       font-size: 0.9rem;
       background: var(--bg-section);
       border-top: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    
+    .footer .credits {
+      font-weight: bold; 
+      opacity: 0.8;
+      color: var(--text-accent);
+      text-shadow: 0 0 5px rgba(0, 255, 195, 0.2);
     }
     
     .error {
@@ -499,7 +510,10 @@
       </div>
     </div>
     
-    <div class="timestamp" id="timestamp"></div>
+    <div class="footer" id="footer">
+        <div id="last-updated"></div>
+        <div class="credits">Vibecoded by a $FEDUP clown</div>
+    </div>
   </div>
 
   <script>
@@ -562,7 +576,8 @@
         
         if (data.lastUpdated) {
           const date = new Date(data.lastUpdated);
-          document.getElementById('timestamp').innerHTML = `Last updated: ${date.toLocaleString()}`;
+          // Update the dedicated element inside the footer
+          document.getElementById('last-updated').innerHTML = `Last updated: ${date.toLocaleString()}`;
         }
         
         // Fetch detailed traits
@@ -582,6 +597,7 @@
            
            categories.forEach(catName => {
                const lowerCat = catName.toLowerCase();
+               
                if (lowerCat.includes('legendary')) {
                    if (!allowedLegendaries.includes(lowerCat)) {
                        delete traitData[catName];
@@ -598,7 +614,7 @@
 
            let totalUniqueTraits = 0;
            Object.values(traitData).forEach(cat => totalUniqueTraits += Object.keys(cat).length);
-           const totalPossible = 370; 
+           const totalPossible = 396; 
 
            const newCard = document.createElement('div');
            newCard.className = 'stat-card';

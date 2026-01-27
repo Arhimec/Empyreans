@@ -26,14 +26,13 @@
     body {
       background: radial-gradient(circle at top right, #161b22, #05070a);
       color: var(--text-main);
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: 'Inter', sans-serif;
       margin: 0;
       line-height: 1.6;
       min-height: 100vh;
       padding-bottom: 60px;
     }
 
-    /* HEADER */
     .header {
       backdrop-filter: blur(12px);
       background: rgba(5, 7, 10, 0.8);
@@ -59,7 +58,6 @@
     .logo-hodl { height: 40px; border-radius: 50%; border: 1px solid var(--accent); }
     .logo-mvx { height: 24px; }
 
-    /* GRID SYSTEM */
     .dashboard-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -68,7 +66,7 @@
       margin: 40px auto;
       padding: 0 20px;
       grid-auto-rows: min-content;
-      align-items: stretch; /* Ensures columns stretch to match height */
+      align-items: stretch;
     }
 
     .col-span-1 { grid-column: span 1; }
@@ -76,7 +74,6 @@
     .col-span-3 { grid-column: span 3; }
     .col-span-4 { grid-column: span 4; }
 
-    /* CARD STYLES */
     .glow-card, .glow-panel {
       background: var(--card-bg);
       backdrop-filter: blur(10px);
@@ -88,7 +85,7 @@
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      height: 100%; /* Critical: Forces card to fill grid row height */
+      height: 100%;
     }
 
     .glow-card:hover {
@@ -96,13 +93,19 @@
       transform: translateY(-5px);
     }
 
-    /* METRICS */
+    .metric-card {
+      justify-content: space-between;
+      align-items: stretch;
+      text-align: center;
+      min-height: 160px; 
+    }
+
     .metric-title { 
       font-size: 0.75rem; 
       color: var(--text-dim); 
       text-transform: uppercase; 
       letter-spacing: 1px; 
-      margin-bottom: 15px; 
+      margin-bottom: 10px; 
       font-weight: 600;
     }
 
@@ -110,14 +113,13 @@
       font-size: 1.8rem; 
       font-weight: 800; 
       color: var(--accent); 
-      line-height: 1.2;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      flex-grow: 1;
     }
 
-    /* BUTTONS */
     .btn {
       background: var(--accent);
       color: #05070a;
@@ -128,7 +130,7 @@
       cursor: pointer;
       text-transform: uppercase;
       font-size: 0.85rem;
-      transition: all 0.3s ease;
+      transition: all 0.2s ease;
       text-align: center;
       text-decoration: none;
       display: flex;
@@ -139,12 +141,8 @@
       box-shadow: 0 4px 6px rgba(0,0,0,0.2);
     }
 
-    .btn:hover {
-      filter: brightness(1.1); 
-      box-shadow: 0 0 15px var(--accent-glow);
-    }
+    .btn:hover { filter: brightness(1.1); box-shadow: 0 0 15px var(--accent-glow); }
 
-    /* Static Button Variant */
     .btn-static {
       background: rgba(0, 255, 195, 0.1);
       color: var(--accent);
@@ -154,7 +152,6 @@
     }
     .btn-static:hover { filter: none; box-shadow: none; }
 
-    /* Outline Button Variant */
     .btn-outline {
       background: transparent;
       border: 1px solid #ff5555;
@@ -165,7 +162,6 @@
       box-shadow: 0 0 15px rgba(255, 85, 85, 0.4);
     }
 
-    /* INPUTS */
     .input-row { display: flex; flex-direction: column; width: 100%; margin-bottom: 15px; }
     
     input {
@@ -179,28 +175,21 @@
       transition: 0.2s;
       margin-top: 5px;
     }
+    input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
 
-    input:focus {
-      outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 15px var(--accent-glow);
-    }
-
-    /* SCROLLBARS */
     .scrollable-content {
         max-height: 350px;
         overflow-y: auto;
         padding-right: 5px;
         margin-top: 10px;
+        flex: 1;
         scrollbar-width: thin;
         scrollbar-color: var(--accent) transparent;
-        flex: 1; /* Forces content to expand and fill card */
     }
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
     ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
 
-    /* RANK BADGES */
     .rank-badge {
       background: linear-gradient(135deg, var(--accent), #00b894);
       color: #000;
@@ -213,7 +202,6 @@
       box-shadow: 0 4px 10px rgba(0,0,0,0.3);
     }
 
-    /* LISTS & COLLAPSIBLES */
     .category-totals, #excludedNFTsList { padding-left: 0; list-style: none; }
     .category-totals li, #excludedNFTsList li {
         padding: 8px 0;
@@ -230,7 +218,6 @@
     details ul { padding: 10px 20px; margin: 0; list-style: none; }
     details li { font-size: 0.85rem; color: var(--text-dim); padding: 4px 0; }
 
-    /* ADMIN MODALS */
     #passwordSection, #rewardsManagement {
         background: var(--card-bg);
         border: 1px solid var(--accent);
@@ -243,13 +230,11 @@
     th { text-align: left; border-bottom: 1px solid var(--accent); padding: 10px; color: var(--accent); }
     td { padding: 10px; border-bottom: 1px solid var(--glass-border); }
 
-    /* RESPONSIVE */
     @media (max-width: 1024px) {
       .dashboard-grid { grid-template-columns: repeat(2, 1fr); }
       .col-span-1, .col-span-2, .col-span-3, .col-span-4 { grid-column: span 2; }
       #publicCalculator { grid-column: span 2; }
     }
-
     @media (max-width: 768px) {
       .dashboard-grid { grid-template-columns: 1fr; }
       .col-span-1, .col-span-2, .col-span-3, .col-span-4 { grid-column: span 1; }
@@ -272,24 +257,24 @@
 
 <div class="dashboard-grid">
   
-  <div class="glow-card col-span-1">
+  <div class="glow-card metric-card col-span-1">
     <div class="metric-title">Live Supply</div>
-    <div id="mintedCount" class="btn btn-static">Loading...</div>
+    <div class="btn" style="cursor: default;">Sold Out</div>
   </div>
 
-  <div class="glow-card col-span-1">
+  <div class="glow-card metric-card col-span-1">
     <div class="metric-title">Analytics</div>
     <a href="http://203.161.43.175:3012/stats.html" target="_blank" rel="noopener" class="btn">View Stats</a>
   </div>
 
-  <div class="glow-card col-span-1">
+  <div class="glow-card metric-card col-span-1">
     <div class="metric-title">Actions</div>
     <button class="btn" id="showManageBtn">Admin Access</button>
   </div>
 
-  <div class="glow-card col-span-1">
-    <div class="metric-title">Drops</div>
-    <a href="https://xoxno.com/collection/EMP-897b49/drops" target="_blank" rel="noopener" class="btn">Go to Mint</a>
+  <div class="glow-card metric-card col-span-1">
+    <div class="metric-title">Marketplace</div>
+    <a href="https://oox.art/marketplace/collections/EMP-897b49" target="_blank" rel="noopener" class="btn">Go to Market</a>
   </div>
 
 
@@ -306,7 +291,7 @@
     </form>
   </div>
 
-  <div class="glow-card col-span-1">
+  <div class="glow-card metric-card col-span-1">
     <div class="metric-title">Rank Status</div>
     <div class="metric-value" id="walletRankDisplay">—</div>
   </div>
@@ -385,7 +370,6 @@ const fhodlCollectionId = "FHODL-a9ad67";
 const fhodlRewardRate = 1400;
 
 // Elements
-const mintedCountSpan = document.getElementById('mintedCount');
 const walletRankDisplay = document.getElementById('walletRankDisplay');
 const calculateBtn = document.getElementById('calculateBtn');
 const walletInput = document.getElementById('walletInput');
@@ -689,24 +673,6 @@ document.getElementById('resyncCollectionBtn').addEventListener('click', async (
 });
 
 loadConfig();
-loadMintedCount();
-
-async function loadMintedCount() {
-  const mintedCountSpan = document.getElementById('mintedCount');
-  async function fetchCount() {
-    mintedCountSpan.textContent = 'Loading...';
-    try {
-      const res = await fetch(`https://api.multiversx.com/nfts/count?collection=${empCollectionId}`);
-      if (!res.ok) { mintedCountSpan.textContent = 'N/A'; return; }
-      const text = await res.text();
-      const count = parseInt(text.trim());
-      if (!isNaN(count)) mintedCountSpan.textContent = count.toLocaleString();
-      else mintedCountSpan.textContent = 'N/A';
-    } catch (e) { mintedCountSpan.textContent = 'Error'; }
-  }
-  await fetchCount();
-  setInterval(fetchCount, 30000); 
-}
 </script>
 </body>
 </html>
